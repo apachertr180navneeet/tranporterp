@@ -42,7 +42,9 @@ class FuelPumpController extends Controller
         }
 
         $fuelPumps = $query->orderBy('name')->paginate(15);
-        $fuelCompanies = FuelCompany::where('status', 'active')->orderBy('name')->get();
+        $fuelCompanies = FuelCompany::where(function($q) {
+            $q->where('status', 'active')->orWhereNull('status');
+        })->orderBy('name')->get();
         return view('admin.masters.fuel-pumps.index', compact('fuelPumps', 'fuelCompanies'));
     }
 
@@ -87,7 +89,9 @@ class FuelPumpController extends Controller
 
     public function create()
     {
-        $fuelCompanies = FuelCompany::where('status', 'active')->orderBy('name')->get();
+        $fuelCompanies = FuelCompany::where(function($q) {
+            $q->where('status', 'active')->orWhereNull('status');
+        })->orderBy('name')->get();
         return view('admin.masters.fuel-pumps.create', compact('fuelCompanies'));
     }
 
@@ -110,7 +114,9 @@ class FuelPumpController extends Controller
 
     public function edit(FuelPump $fuelPump)
     {
-        $fuelCompanies = FuelCompany::where('status', 'active')->orderBy('name')->get();
+        $fuelCompanies = FuelCompany::where(function($q) {
+            $q->where('status', 'active')->orWhereNull('status');
+        })->orderBy('name')->get();
         return view('admin.masters.fuel-pumps.edit', compact('fuelPump', 'fuelCompanies'));
     }
 

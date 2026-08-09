@@ -1,7 +1,6 @@
 @extends('admin.layouts.app')
 
 @section('style')
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <style>
 .select2-container--default .select2-selection--single { height: 38px; border: 1px solid #d9dee3; }
 .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 36px; }
@@ -136,9 +135,10 @@
 @endsection
 
 @section('script')
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
-$('.select2-modal').select2({ dropdownParent: '#importModal', width: '100%' });
+$(document).ready(function() {
+    $('.select2-modal').select2({ dropdownParent: '#importModal', width: '100%' });
+});
     function handleDelete(id, name) {
         Swal.fire({
             title: 'Delete Fuel Pump?',

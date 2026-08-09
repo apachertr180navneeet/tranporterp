@@ -114,12 +114,15 @@
                                 var placeholder = $this.attr('placeholder') || $this.find('option:first-child').text() || 'Select an option';
                                 var allowClear = !$this.prop('required');
                                 var $modal = $this.closest('.modal');
-                                $this.select2({
+                                var selectConfig = {
                                     placeholder: placeholder,
                                     allowClear: allowClear,
-                                    width: '100%',
-                                    dropdownParent: $modal.length ? $modal : $(document.body)
-                                });
+                                    width: '100%'
+                                };
+                                if ($modal.length) {
+                                    selectConfig.dropdownParent = $modal;
+                                }
+                                $this.select2(selectConfig);
                             });
                         }
                         window.initGlobalSelect2 = initGlobalSelect2;

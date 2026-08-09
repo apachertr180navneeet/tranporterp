@@ -35,7 +35,7 @@
                     @if(auth()->user()->isSuperAdmin())
                     <div class="col-md-6">
                         <label class="form-label required fw-semibold">Company</label>
-                        <select name="company_id" id="company_id" class="form-select select2" required>
+                        <select name="company_id" id="company_id" class="form-select" required>
                             <option value="">Select Company</option>
                             @foreach($companies as $comp)
                             <option value="{{ $comp->id }}" {{ $companyId == $comp->id ? 'selected' : '' }}>{{ $comp->name }}</option>
@@ -48,7 +48,7 @@
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Branch</label>
-                        <select name="branch_id" id="branch_id" class="form-select select2">
+                        <select name="branch_id" id="branch_id" class="form-select">
                             <option value="">All Branches / Main Office</option>
                             @foreach($branches as $branch)
                             <option value="{{ $branch->id }}" {{ old('branch_id') == $branch->id ? 'selected' : '' }}>{{ $branch->name }}</option>
@@ -73,7 +73,7 @@
 
                     <div class="col-md-3">
                         <label class="form-label required fw-semibold">Category</label>
-                        <select name="category_id" class="form-select select2" required>
+                        <select name="category_id" class="form-select" required>
                             <option value="">Select Category</option>
                             @foreach($categories as $cat)
                             <option value="{{ $cat->id }}">{{ $cat->name }}</option>
@@ -83,7 +83,7 @@
 
                     <div class="col-md-3">
                         <label class="form-label fw-semibold">Folder</label>
-                        <select name="folder_id" class="form-select select2">
+                        <select name="folder_id" class="form-select">
                             <option value="">Root Directory</option>
                             @foreach($folders as $f)
                             <option value="{{ $f->id }}">{{ $f->name }}</option>
@@ -164,21 +164,8 @@ $(document).ready(function() {
         var $branchSelect = $('#branch_id');
         if (!$branchSelect.length) return;
 
-        function refreshSelect2(optionsHtml) {
-            if ($branchSelect.data('select2')) {
-                $branchSelect.select2('destroy');
-            }
-            $branchSelect.html(optionsHtml);
-            if (typeof window.initGlobalSelect2 === 'function') {
-                window.initGlobalSelect2();
-            } else if ($.fn.select2) {
-                $branchSelect.select2();
-            }
-            $branchSelect.trigger('change');
-        }
-
         if (!companyId) {
-            refreshSelect2('<option value="">All Branches / Main Office</option>');
+            $branchSelect.html('<option value="">All Branches / Main Office</option>');
             return;
         }
 
@@ -194,10 +181,10 @@ $(document).ready(function() {
                         options += '<option value="' + branch.id + '" ' + selected + '>' + branch.name + '</option>';
                     });
                 }
-                refreshSelect2(options);
+                $branchSelect.html(options);
             },
             error: function() {
-                refreshSelect2('<option value="">All Branches / Main Office</option>');
+                $branchSelect.html('<option value="">All Branches / Main Office</option>');
             }
         });
     }
@@ -208,7 +195,7 @@ $(document).ready(function() {
         loadBranches(initialCompanyId, initialBranchId);
     }
 
-    $(document).on('change select2:select', '#company_id', function() {
+    $(document).on('change', '#company_id', function() {
         var companyId = $(this).val();
         loadBranches(companyId, null);
     });

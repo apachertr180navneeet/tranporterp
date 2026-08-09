@@ -1,9 +1,5 @@
 @extends('admin.layouts.app')
 
-@section('style')
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-@endsection
-
 @section('content')
 <div class="container-fluid flex-grow-1 container-p-y">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
@@ -49,7 +45,7 @@
                 @if(auth()->user()->isSuperAdmin())
                 <div class="col-md-3">
                     <label class="form-label">Company</label>
-                    <select name="company_id" class="form-select select2">
+                    <select name="company_id" class="form-select">
                         <option value="all">All Companies</option>
                         @foreach($companies as $company)
                         <option value="{{ $company->id }}" {{ request('company_id') == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
@@ -59,7 +55,7 @@
                 @endif
                 <div class="col-md-3">
                     <label class="form-label">Branch</label>
-                    <select name="branch_id" class="form-select select2">
+                    <select name="branch_id" class="form-select">
                         <option value="">All Branches</option>
                         @foreach($branches as $branch)
                         <option value="{{ $branch->id }}" {{ request('branch_id') == $branch->id ? 'selected' : '' }}>{{ $branch->name }}</option>
@@ -68,7 +64,7 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Consigner</label>
-                    <select name="consignor_id" class="form-select select2">
+                    <select name="consignor_id" class="form-select">
                         <option value="">All Consigners</option>
                         @foreach($consignors as $consignor)
                         <option value="{{ $consignor->id }}" {{ request('consignor_id') == $consignor->id ? 'selected' : '' }}>{{ $consignor->name }}</option>
@@ -280,7 +276,6 @@
 @endsection
 
 @section('script')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
         var currentGrossBaseAmount = 0;

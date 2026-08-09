@@ -28,7 +28,7 @@
                     <div class="col-md-6"><label class="form-label">HSN/SAC Code</label><input type="text" name="hsn_code" class="form-control @error('hsn_code') is-invalid @enderror" value="{{ old('hsn_code', $company->hsn_code) }}">@error('hsn_code')<div class="invalid-feedback">{{ $message }}</div>@enderror</div>
                     <div class="col-md-6">
                         <label class="form-label">State</label>
-                        <select name="state" class="form-select select2 @error('state') is-invalid @enderror">
+                        <select name="state" class="form-select @error('state') is-invalid @enderror">
                             <option value="">-- Select State --</option>
                             @php
                             $indianStates = [
@@ -82,12 +82,9 @@
 @endsection
 
 @section('script')
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
 $(document).ready(function() {
-    $('.select2').select2({ width: '100%', placeholder: 'Select State', allowClear: true });
 
     $('#companyForm').validate({
         rules: {

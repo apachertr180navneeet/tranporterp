@@ -68,7 +68,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Company</label>
-                        <select name="company_id" id="company_id" class="form-select select2 @error('company_id') is-invalid @enderror">
+                        <select name="company_id" id="company_id" class="form-select @error('company_id') is-invalid @enderror">
                             <option value="">Select Company</option>
                             @foreach($companies as $company)
                                 <option value="{{ $company->id }}" {{ old('company_id') == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
@@ -78,14 +78,14 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Branch</label>
-                        <select name="branch_id" id="branch_id" class="form-select select2 @error('branch_id') is-invalid @enderror">
+                        <select name="branch_id" id="branch_id" class="form-select @error('branch_id') is-invalid @enderror">
                             <option value="">Select Branch</option>
                         </select>
                         @error('branch_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Role</label>
-                        <select name="role" class="form-select select2 @error('role') is-invalid @enderror">
+                        <select name="role" class="form-select @error('role') is-invalid @enderror">
                             <option value="">Select Role</option>
                             @foreach($roles->pluck('name') as $role)
                                 <option value="{{ $role }}" {{ old('role') == $role ? 'selected' : '' }}>{{ $role }}</option>
@@ -95,7 +95,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">State</label>
-                        <select name="state" id="state" class="form-select select2 @error('state') is-invalid @enderror">
+                        <select name="state" id="state" class="form-select @error('state') is-invalid @enderror">
                             <option value="">Select State</option>
                             @foreach(array_keys($states) as $stateName)
                                 <option value="{{ $stateName }}" {{ old('state') == $stateName ? 'selected' : '' }}>{{ $stateName }}</option>
@@ -105,7 +105,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">City</label>
-                        <select name="city" id="city" class="form-select select2 @error('city') is-invalid @enderror">
+                        <select name="city" id="city" class="form-select @error('city') is-invalid @enderror">
                             <option value="">Select City</option>
                         </select>
                         @error('city')<div class="invalid-feedback">{{ $message }}</div>@enderror
@@ -127,18 +127,6 @@
 @endsection
 
 @section('script')
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-<style>
-    .select2-container .select2-selection--single { height: 38px; border: 1px solid #d9dee3; }
-    .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 36px; }
-    .select2-container--default .select2-selection--single .select2-selection__arrow { height: 36px; }
-    .select2-dropdown { border: 1px solid #d9dee3; border-radius: 0.375rem; }
-    .select2-search__field { border: 1px solid #d9dee3; border-radius: 0.375rem; padding: 0.375rem 0.75rem; margin: 8px; width: calc(100% - 22px) !important; }
-    .select2-results__option { padding: 8px 16px; }
-    .select2-results__option--highlighted { background-color: rgba(67, 89, 113, 0.1) !important; color: #696cff !important; }
-    .is-invalid + .select2-container .select2-selection--single { border-color: #ff3e1d !important; }
-</style>
 <script>
 window.togglePassword = function(id) {
     const input = document.getElementById(id);
@@ -151,8 +139,6 @@ window.togglePassword = function(id) {
 }
 
 $(document).ready(function() {
-    $('#state, #city').select2({ placeholder: 'Search & Select', width: '100%' });
-
     const stateSelect = document.getElementById('state');
     const citySelect = document.getElementById('city');
     const oldState = "{{ old('state') }}";
@@ -161,7 +147,6 @@ $(document).ready(function() {
     function loadCities() {
         const selectedState = stateSelect.value;
         citySelect.innerHTML = '<option value="">Select City</option>';
-        $('#city').select2('destroy').select2({ placeholder: 'Search & Select', width: '100%' });
         if (!selectedState) return;
         $.ajax({
             url: '{{ route("admin.users.get-cities") }}',
@@ -176,7 +161,6 @@ $(document).ready(function() {
                     if (city === oldCity) option.selected = true;
                     citySelect.appendChild(option);
                 });
-                $('#city').select2('destroy').select2({ placeholder: 'Search & Select', width: '100%' });
             }
         });
     }

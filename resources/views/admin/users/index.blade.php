@@ -27,7 +27,7 @@
         <div class="card-body border-bottom py-3">
             <form method="GET" action="{{ route('admin.users.index') }}" class="row g-2">
                 <div class="col-12 col-md-3">
-                    <select name="company_id" class="form-select select2">
+                    <select name="company_id" class="form-select">
                         <option value="">All Companies</option>
                         @foreach($companies as $company)
                             <option value="{{ $company->id }}" {{ request('company_id') == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
@@ -35,14 +35,14 @@
                     </select>
                 </div>
                 <div class="col-12 col-md-2">
-                    <select name="status" class="form-select select2">
+                    <select name="status" class="form-select">
                         <option value="">All Status</option>
                         <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
                         <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
                     </select>
                 </div>
                 <div class="col-12 col-md-2">
-                    <select name="role" class="form-select select2">
+                    <select name="role" class="form-select">
                         <option value="">All Roles</option>
                         @foreach($allRoles as $role)
                             <option value="{{ $role }}" {{ request('role') == $role ? 'selected' : '' }}>{{ $role }}</option>

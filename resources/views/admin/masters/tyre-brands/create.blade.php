@@ -44,7 +44,7 @@
 
                     <div class="col-md-6">
                         <label class="form-label" for="status">Status <span class="text-danger">*</span></label>
-                        <select id="status" name="status" class="form-select select2 @error('status') is-invalid @enderror" required>
+                        <select id="status" name="status" class="form-select @error('status') is-invalid @enderror" required>
                             <option value="active" {{ old('status', 'active') == 'active' ? 'selected' : '' }}>Active</option>
                             <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
                         </select>

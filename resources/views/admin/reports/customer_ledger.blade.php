@@ -26,9 +26,9 @@
         </div>
         <div class="card-body">
             <form method="GET" action="{{ route('admin.reports.customer-ledger') }}" class="row g-2 align-items-end">
-                <div class="col-md">
-                    <label class="form-label">Customer (Consignee) <span class="text-danger">*</span></label>
-                    <select name="consignee_id" class="form-select select2" required>
+                <div class="col-md-5">
+                    <label class="form-label fw-bold">Select Customer (Consignee) <span class="text-danger">*</span></label>
+                    <select name="consignee_id" class="form-select" required>
                         <option value="">Select Customer</option>
                         @foreach($consignees as $consignee)
                         <option value="{{ $consignee->id }}" {{ request('consignee_id') == $consignee->id ? 'selected' : '' }}>{{ $consignee->name }} {{ $consignee->phone ? '(' . $consignee->phone . ')' : '' }}</option>

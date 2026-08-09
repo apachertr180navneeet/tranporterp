@@ -667,11 +667,6 @@ body { background: var(--bs-body-bg) !important; }
     /* Card stat text on dashboard */
     .stat-card .card-body { padding: 1rem !important; }
 
-    /* Breadcrumb — hide on very small */
-    .breadcrumb { font-size: 0.78rem !important; flex-wrap: nowrap !important; overflow: hidden !important; }
-
-    /* Select2 on mobile */
-    .select2-container { width: 100% !important; }
 }
 
 /* --- 576px and below: Small Mobile --- */
@@ -733,106 +728,6 @@ body { background: var(--bs-body-bg) !important; }
     .container-p-y { padding: 1.25rem !important; }
     .card-body { padding: 1.25rem !important; }
     .layout-navbar { padding-left: 1rem !important; padding-right: 1rem !important; }
-}
-
-/* ============================================================
-   Select2 – global styling to match Bootstrap form controls
-   ============================================================ */
-/* Regular size – matches .form-control / .form-select */
-.select2-container .select2-selection--single {
-    height: 38px;
-    border: 1.5px solid #e8eaed;
-    border-radius: var(--radius-sm);
-    background-color: #f8fafb;
-    transition: var(--transition);
-}
-.select2-container--default .select2-selection--single .select2-selection__rendered {
-    line-height: 36px;
-    padding-left: 1rem;
-    font-size: 0.9rem;
-    color: #697a8d;
-}
-.select2-container--default .select2-selection--single .select2-selection__arrow {
-    height: 36px;
-}
-.select2-container--default .select2-selection--single .select2-selection__placeholder {
-    color: #b4bdc6;
-}
-
-/* Small size – matches .form-control-sm / .form-select-sm */
-/* Target the Select2 container that follows a .select2-sm select */
-.select2-sm + .select2-container .select2-selection--single {
-    height: 33px !important;
-    border: 1.5px solid #d9dee3 !important;
-    border-radius: 0.375rem !important;
-    background-color: #fff !important;
-}
-.select2-sm + .select2-container .select2-selection--single .select2-selection__rendered {
-    line-height: 31px !important;
-    padding-left: 0.5rem !important;
-    font-size: 0.75rem !important;
-    color: #697a8d !important;
-}
-.select2-sm + .select2-container .select2-selection--single .select2-selection__arrow {
-    height: 31px !important;
-}
-.select2-sm + .select2-container .select2-selection--single .select2-selection__placeholder {
-    color: #b4bdc6 !important;
-    font-size: 0.75rem !important;
-}
-
-/* Small size Dropdown (Select2 4.x adds dropdown to body, so we need to target it globally or use dropdownCssClass) */
-/* Since dropdownCssClass is safer for dropdowns, we'll keep that part */
-.select2-dropdown.select2-sm {
-    font-size: 0.75rem !important;
-}
-.select2-dropdown.select2-sm .select2-results__option {
-    padding: 6px 12px !important;
-}
-.select2-dropdown.select2-sm .select2-search__field {
-    padding: 4px 8px !important;
-    font-size: 0.75rem !important;
-}
-
-/* Dropdown */
-.select2-dropdown {
-    border: 1.5px solid #e8eaed;
-    border-radius: var(--radius-sm);
-    box-shadow: var(--shadow-md);
-    z-index: 9999;
-}
-.select2-search--dropdown .select2-search__field {
-    border: 1px solid #d9dee3;
-    border-radius: 0.375rem;
-    padding: 0.375rem 0.75rem;
-    margin: 8px;
-    width: calc(100% - 18px) !important;
-    font-size: 0.85rem;
-}
-.select2-results__option {
-    padding: 8px 16px;
-    font-size: 0.875rem;
-}
-.select2-results__option--highlighted {
-    background-color: rgba(6, 46, 57, 0.08) !important;
-    color: var(--bs-primary) !important;
-}
-.select2-results__option[aria-selected="true"] {
-    background-color: rgba(253, 85, 35, 0.06) !important;
-    color: #FD5523 !important;
-}
-/* Focus state */
-.select2-container--default.select2-container--focus .select2-selection--single,
-.select2-container--default.select2-container--open .select2-selection--single {
-    border-color: var(--bs-primary);
-    box-shadow: 0 0 0 3px rgba(6, 46, 57, 0.08);
-    background-color: #fff;
-}
-/* Small size focus */
-.select2-sm + .select2-container.select2-container--focus .select2-selection--single,
-.select2-sm + .select2-container.select2-container--open .select2-selection--single {
-    border-color: #696cff !important;
-    box-shadow: 0 0 0 0.2rem rgba(105, 108, 255, 0.15) !important;
 }
 
 /* --- 992px and above: Desktop sidebar always visible --- */

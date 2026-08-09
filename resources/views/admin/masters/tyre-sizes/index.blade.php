@@ -25,15 +25,15 @@
                     <input type="text" name="search" class="form-control" placeholder="Search by size name..." value="{{ request('search') }}">
                 </div>
                 <div class="col-md-3">
-                    <select name="tyre_brand_id" class="form-select select2">
+                    <select name="tyre_brand_id" class="form-select">
                         <option value="">All Brands</option>
-                        @foreach($brands as $b)
-                            <option value="{{ $b->id }}" {{ request('tyre_brand_id') == $b->id ? 'selected' : '' }}>{{ $b->name }}</option>
+                        @foreach($brands as $brand)
+                            <option value="{{ $brand->id }}" {{ request('tyre_brand_id') == $brand->id ? 'selected' : '' }}>{{ $brand->name }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <select name="tyre_model_id" class="form-select select2">
+                    <select name="tyre_model_id" class="form-select">
                         <option value="">All Models</option>
                         @foreach($models as $m)
                             <option value="{{ $m->id }}" {{ request('tyre_model_id') == $m->id ? 'selected' : '' }}>{{ $m->name }} ({{ $m->brand->name ?? '' }})</option>

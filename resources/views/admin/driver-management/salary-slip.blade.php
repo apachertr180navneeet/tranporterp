@@ -1,8 +1,4 @@
 @extends('admin.layouts.app')
-
-@section('style')
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-<style>.select2-container--default .select2-selection--single{height:38px;padding:5px 8px;}.select2-container--default .select2-selection--single .select2-selection__rendered{line-height:24px;}.select2-container--default .select2-selection--single .select2-selection__arrow{height:36px;}</style>
 @endsection
 
 @section('content')
@@ -39,7 +35,7 @@
                     <form method="GET" class="row g-3 align-items-end">
                         <div class="col-md-5">
                             <label class="form-label">Driver <span class="text-danger">*</span></label>
-                            <select name="driver_id" class="form-select select2" data-placeholder="Search driver..." required>
+                            <select name="driver_id" class="form-select" required>
                                 <option value="">Select Driver</option>
                                 @foreach($drivers as $driver)
                                     <option value="{{ $driver->id }}" {{ request('driver_id') == $driver->id ? 'selected' : '' }}>{{ $driver->name }} ({{ $driver->phone ?? 'N/A' }})</option>
@@ -466,8 +462,4 @@
     padding-top: 12px;
 }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-<script>
-$(function(){ $('.select2').select2({ width: '100%' }); });
-</script>
 @endsection

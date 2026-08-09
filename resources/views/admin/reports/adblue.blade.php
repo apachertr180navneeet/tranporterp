@@ -29,7 +29,7 @@
                 <div class="row g-2 align-items-end">
                     <div class="col-auto">
                         <label class="form-label">Vehicle</label>
-                        <select name="vehicle_id" class="form-select select2">
+                        <select name="vehicle_id" class="form-select">
                             <option value="">All Vehicles</option>
                             @foreach($vehicleList as $v)
                             <option value="{{ $v->id }}" {{ request('vehicle_id') == $v->id ? 'selected' : '' }}>{{ $v->vehicle_number }}</option>
@@ -38,7 +38,7 @@
                     </div>
                     <div class="col-auto">
                         <label class="form-label">AdBlue Company</label>
-                        <select name="adblue_company_id" id="adblue_company_id" class="form-select select2">
+                        <select name="adblue_company_id" id="adblue_company_id" class="form-select">
                             <option value="">All Companies</option>
                             @foreach($adblueCompanies as $ac)
                             <option value="{{ $ac->id }}" {{ request('adblue_company_id') == $ac->id ? 'selected' : '' }}>{{ $ac->name }}</option>
@@ -47,7 +47,7 @@
                     </div>
                     <div class="col-auto">
                         <label class="form-label">Payment Type</label>
-                        <select name="payment_type" class="form-select select2">
+                        <select name="payment_type" class="form-select">
                             <option value="">All Types</option>
                             <option value="credit" {{ request('payment_type') == 'credit' ? 'selected' : '' }}>Credit</option>
                             <option value="debit" {{ request('payment_type') == 'debit' ? 'selected' : '' }}>Debit</option>

@@ -28,7 +28,7 @@
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Transfer to Company *</label>
-                        <select name="company_id" id="company_id" class="form-select select2" required>
+                        <select name="company_id" id="company_id" class="form-select" required>
                             <option value="">Select Company</option>
                             @foreach($companies as $c)
                             <option value="{{ $c->id }}" {{ $driver->company_id == $c->id ? 'selected' : '' }}>{{ $c->name }}</option>
@@ -37,7 +37,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Transfer to Branch</label>
-                        <select name="branch_id" id="branch_id" class="form-select select2">
+                        <select name="branch_id" id="branch_id" class="form-select">
                             <option value="">Select Branch</option>
                         </select>
                     </div>
@@ -46,7 +46,7 @@
                 <div class="row g-3 mb-3">
                     <div class="col-md-6">
                         <label class="form-label">Transfer to Branch</label>
-                        <select name="branch_id" id="branch_id" class="form-select select2">
+                        <select name="branch_id" id="branch_id" class="form-select">
                             <option value="">Select Branch</option>
                             @foreach($branches as $b)
                             <option value="{{ $b->id }}" {{ $driver->branch_id == $b->id ? 'selected' : '' }}>{{ $b->name }}</option>

@@ -38,7 +38,7 @@
             <form method="GET" class="row g-3 align-items-end">
                 <div class="col-md-3">
                     <label class="form-label">Vehicle</label>
-                    <select name="vehicle_id" class="form-select select2">
+                    <select name="vehicle_id" class="form-select">
                         <option value="">All Vehicles</option>
                         @foreach($vehicles as $vehicle)
                             <option value="{{ $vehicle->id }}" {{ request('vehicle_id') == $vehicle->id ? 'selected' : '' }}>{{ $vehicle->vehicle_number }}</option>
@@ -47,7 +47,7 @@
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Status</label>
-                    <select name="status" class="form-select select2">
+                    <select name="status" class="form-select">
                         <option value="">All Status</option>
                         <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
                         <option value="removed" {{ request('status') == 'removed' ? 'selected' : '' }}>Removed</option>

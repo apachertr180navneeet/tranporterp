@@ -33,7 +33,7 @@
                         <!-- Company Selection -->
                         <div class="form-group">
                             <label class="font-weight-bold text-dark">Select Company <span class="text-danger">*</span></label>
-                            <select name="company_id" id="company_id" class="form-control select2 @error('company_id') is-invalid @enderror" required>
+                            <select name="company_id" id="company_id" class="form-control @error('company_id') is-invalid @enderror" required>
                                 <option value="">-- Choose Company --</option>
                                 @foreach($companies as $comp)
                                     <option value="{{ $comp->id }}" {{ old('company_id') == $comp->id ? 'selected' : '' }}>
@@ -268,28 +268,9 @@
 </div>
 @endsection
 
-@section('style')
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-<style>
-    .select2-container--default .select2-selection--single { height: 38px; border: 1px solid #d9dee3; border-radius: 0.375rem; }
-    .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 36px; padding-left: 0.75rem; }
-    .select2-container--default .select2-selection--single .select2-selection__arrow { height: 36px; }
-</style>
-@endsection
-
 @section('script')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
 $(document).ready(function() {
-    
-    // Initialize Select2 if available
-    if ($.fn.select2) {
-        $('#company_id').select2({
-            placeholder: '-- Choose Company --',
-            allowClear: true,
-            width: '100%'
-        });
-    }
 
     // Function to update company details in Live Preview
     function updateCompanyPreview(companyId) {
@@ -357,7 +338,7 @@ $(document).ready(function() {
     }
 
     // Trigger on Company Change
-    $(document).on('change select2:select select2:clear', '#company_id', function() {
+    $(document).on('change', '#company_id', function() {
         updateCompanyPreview($(this).val());
     });
 

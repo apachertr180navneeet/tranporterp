@@ -55,7 +55,7 @@
                             @if(auth()->user()->isSuperAdmin() && !empty($companies))
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Company <span class="text-danger">*</span></label>
-                                <select name="company_id" id="company_id" class="form-select select2 @error('company_id') is-invalid @enderror" required>
+                                <select name="company_id" id="company_id" class="form-select @error('company_id') is-invalid @enderror" required>
                                     <option value="">Select Company</option>
                                     @foreach($companies as $company)
                                         <option value="{{ $company->id }}" {{ old('company_id') == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
@@ -65,7 +65,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Branch <span class="text-danger">*</span></label>
-                                <select name="branch_id" id="branch_id" class="form-select select2 @error('branch_id') is-invalid @enderror" required>
+                                <select name="branch_id" id="branch_id" class="form-select @error('branch_id') is-invalid @enderror" required>
                                     <option value="">Select Branch</option>
                                 </select>
                                 <div class="invalid-feedback @error('branch_id') d-block @enderror">
@@ -93,7 +93,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold">Payment Type <span class="text-danger">*</span></label>
-                                <select name="payment_type" class="form-select select2 @error('payment_type') is-invalid @enderror" required>
+                                <select name="payment_type" class="form-select @error('payment_type') is-invalid @enderror" required>
                                     <option value="paid" {{ old('payment_type') == 'paid' ? 'selected' : '' }}>Paid</option>
                                     <option value="topay" {{ old('payment_type', 'topay') == 'topay' ? 'selected' : '' }}>To Pay</option>
                                     <option value="tobill" {{ old('payment_type') == 'tobill' ? 'selected' : '' }}>To Bill</option>
@@ -110,7 +110,7 @@
                                         <i class="bx bx-plus-circle me-1"></i> Add New
                                     </button>
                                 </div>
-                                <select name="from_city" class="form-select select2 @error('from_city') is-invalid @enderror" required>
+                                <select name="from_city" class="form-select @error('from_city') is-invalid @enderror" required>
                                     <option value="">Select Origin</option>
                                     @foreach($cities as $city)
                                         <option value="{{ $city->id }}" {{ old('from_city') == $city->id ? 'selected' : '' }}>{{ $city->name }} ({{ $city->state }})</option>
@@ -134,7 +134,7 @@
                                         <i class="bx bx-plus-circle me-1"></i> Add New
                                     </button>
                                 </div>
-                                <select name="to_city" class="form-select select2 @error('to_city') is-invalid @enderror" required>
+                                <select name="to_city" class="form-select @error('to_city') is-invalid @enderror" required>
                                     <option value="">Select Destination</option>
                                     @foreach($cities as $city)
                                         <option value="{{ $city->id }}" {{ old('to_city') == $city->id ? 'selected' : '' }}>{{ $city->name }} ({{ $city->state }})</option>
@@ -575,7 +575,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label fw-bold small text-uppercase opacity-75">Supplier</label>
-                                <select name="supplier_id" class="form-select select2">
+                                <select name="supplier_id" class="form-select">
                                     <option value="">Select Supplier</option>
                                     @foreach($suppliers as $supplier)
                                         <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
@@ -1064,7 +1064,6 @@
 @endsection
 
 @section('style')
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ asset('assets/admin/css/bilty-create.css') }}" />
 <style>
@@ -1095,7 +1094,6 @@
 
 
 @section('script')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
         function getCompanyBranchData() {
@@ -1131,11 +1129,6 @@
         function setFieldInvalid($el, invalid) {
             const $feedback = getFieldFeedback($el);
             $el.toggleClass('is-invalid', invalid);
-
-            if ($el.hasClass('select2-hidden-accessible')) {
-                $el.next('.select2-container').find('.select2-selection').toggleClass('is-invalid-select2', invalid);
-            }
-
             $feedback.toggleClass('d-block', invalid).toggle(invalid);
         }
 
@@ -1173,9 +1166,7 @@
             }
         });
 
-        // Init Select2
-        $('.select2').select2({ width: '100%' });
-        $('.item-packaging, .item-unit').select2({ width: '100%' });
+        // Init controls
 
 
 
@@ -1963,7 +1954,6 @@
                         </div>
                     </div>`;
             $('#itemsContainer').append(newCard);
-            $('#itemsContainer .item-row:last .item-packaging, #itemsContainer .item-row:last .item-unit').select2({ width: '100%' });
             recalcItems();
             if ($('#itemsContainer .item-row').length > 1) {
                 $('#itemsContainer .item-row:first .remove-item').prop('disabled', false).css('opacity', '1');
@@ -1972,7 +1962,6 @@
 
         $(document).on('click', '.remove-item', function() {
             if ($('#itemsContainer .item-row').length <= 1) return;
-            $(this).closest('.item-row').find('.item-packaging, .item-unit').select2('destroy');
             $(this).closest('.item-row').remove();
             $('#itemsContainer .item-row').each(function(i) {
                 $(this).attr('data-index', i);

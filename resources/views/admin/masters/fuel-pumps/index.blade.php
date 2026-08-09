@@ -1,14 +1,5 @@
 @extends('admin.layouts.app')
 
-@section('style')
-<style>
-.select2-container--default .select2-selection--single { height: 38px; border: 1px solid #d9dee3; }
-.select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 36px; }
-.select2-container--default .select2-selection--single .select2-selection__arrow { height: 36px; }
-.select2-container { width: 100% !important; }
-</style>
-@endsection
-
 @section('content')
 <div class="container-fluid flex-grow-1 container-p-y">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
@@ -118,7 +109,7 @@
                 <div class="modal-body">
                     <p>Download the template first, fill it in, then upload here.</p>
                     <div class="mb-3"><label class="form-label">Fuel Company</label>
-                        <select name="fuel_company_id" class="form-select select2-modal">
+                        <select name="fuel_company_id" class="form-select">
                             <option value="">Select Fuel Company</option>
                             @foreach($fuelCompanies as $fuelCompany)
                             <option value="{{ $fuelCompany->id }}">{{ $fuelCompany->name }}</option>
@@ -136,9 +127,6 @@
 
 @section('script')
 <script>
-$(document).ready(function() {
-    $('.select2-modal').select2({ dropdownParent: '#importModal', width: '100%' });
-});
     function handleDelete(id, name) {
         Swal.fire({
             title: 'Delete Fuel Pump?',

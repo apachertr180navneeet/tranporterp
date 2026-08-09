@@ -170,8 +170,8 @@
                     </div>
                     <!-- Company Filter -->
                     <div class="col-md-2">
-                        <label class="form-label" for="company_id">Company</label>
-                        <select id="company_id" name="company_id" class="form-select select2">
+                        <label class="form-label fw-bold" for="company_id">Company</label>
+                        <select id="company_id" name="company_id" class="form-select">
                             <option value="">All Companies</option>
                             @foreach($companies as $company)
                                 <option value="{{ $company->id }}" {{ $selected_company_id == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>

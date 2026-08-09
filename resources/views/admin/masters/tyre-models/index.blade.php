@@ -25,7 +25,7 @@
                     <input type="text" name="search" class="form-control" placeholder="Search by model name or code..." value="{{ request('search') }}">
                 </div>
                 <div class="col-md-3">
-                    <select name="tyre_brand_id" class="form-select select2">
+                    <select name="tyre_brand_id" class="form-select">
                         <option value="">All Brands</option>
                         @foreach($brands as $b)
                             <option value="{{ $b->id }}" {{ request('tyre_brand_id') == $b->id ? 'selected' : '' }}>{{ $b->name }}</option>
@@ -33,7 +33,7 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <select name="status" class="form-select select2">
+                    <select name="status" class="form-select">
                         <option value="">All Status</option>
                         <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
                         <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>

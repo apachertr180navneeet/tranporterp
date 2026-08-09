@@ -28,7 +28,7 @@
                 <div class="row g-2 align-items-end">
                     <div class="col-auto">
                         <label class="form-label">Vehicle</label>
-                        <select name="vehicle_id" class="form-select select2">
+                        <select name="vehicle_id" class="form-select">
                             <option value="">All Vehicles</option>
                             @foreach($vehicleList as $v)
                             <option value="{{ $v->id }}" {{ request('vehicle_id') == $v->id ? 'selected' : '' }}>{{ $v->vehicle_number }}</option>
@@ -37,7 +37,7 @@
                     </div>
                     <div class="col-auto">
                         <label class="form-label">Fuel Company</label>
-                        <select name="fuel_company_id" id="fuel_company_id" class="form-select select2">
+                        <select name="fuel_company_id" id="fuel_company_id" class="form-select">
                             <option value="">All Companies</option>
                             @foreach($fuelCompanies as $fc)
                             <option value="{{ $fc->id }}" {{ request('fuel_company_id') == $fc->id ? 'selected' : '' }}>{{ $fc->name }}</option>
@@ -46,7 +46,7 @@
                     </div>
                     <div class="col-auto">
                         <label class="form-label">Fuel Pump</label>
-                        <select name="fuel_pump_id" id="fuel_pump_id" class="form-select select2">
+                        <select name="fuel_pump_id" id="fuel_pump_id" class="form-select">
                             <option value="">All Pumps</option>
                             @foreach($fuelPumps as $fp)
                             <option value="{{ $fp->id }}" data-company-id="{{ $fp->fuel_company_id }}" {{ request('fuel_pump_id') == $fp->id ? 'selected' : '' }}>{{ $fp->name }}</option>
@@ -55,7 +55,7 @@
                     </div>
                     <div class="col-auto">
                         <label class="form-label">Payment Type</label>
-                        <select name="payment_type" class="form-select select2">
+                        <select name="payment_type" class="form-select">
                             <option value="">All Types</option>
                             <option value="credit" {{ request('payment_type') == 'credit' ? 'selected' : '' }}>Credit</option>
                             <option value="debit" {{ request('payment_type') == 'debit' ? 'selected' : '' }}>Debit</option>

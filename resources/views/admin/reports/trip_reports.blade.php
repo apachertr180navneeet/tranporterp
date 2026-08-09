@@ -1,10 +1,5 @@
 @extends('admin.layouts.app')
 
-@section('style')
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-<style>.select2-container--default .select2-selection--single{height:38px;padding:5px 8px;}.select2-container--default .select2-selection--single .select2-selection__rendered{line-height:24px;}.select2-container--default .select2-selection--single .select2-selection__arrow{height:36px;}</style>
-@endsection
-
 @section('content')
 <div class="container-fluid flex-grow-1 container-p-y">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
@@ -34,7 +29,7 @@
                 <div class="row g-2 align-items-end">
                     <div class="col">
                         <label class="form-label">Vehicle</label>
-                        <select name="vehicle_id" class="form-select select2">
+                        <select name="vehicle_id" class="form-select">
                             <option value="">All Vehicles</option>
                             @foreach($vehicleList as $v)
                             <option value="{{ $v->id }}" {{ request('vehicle_id') == $v->id ? 'selected' : '' }}>{{ $v->vehicle_number }}</option>
@@ -156,9 +151,4 @@
         </div>
     </div>
 </div>
-@endsection
-
-@section('script')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-<script>$(function(){ $('.select2').select2({ width: '100%' }); });</script>
 @endsection

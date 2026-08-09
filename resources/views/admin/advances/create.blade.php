@@ -31,7 +31,7 @@
                         @if(auth()->user()->isSuperAdmin() || auth()->user()->isCompanyAdmin())
                         <div class="mb-3">
                             <label class="form-label fw-semibold text-dark">Employee <span class="text-danger">*</span></label>
-                            <select name="user_id" class="form-select select2 form-control-lg" required>
+                            <select name="user_id" class="form-select form-control-lg" required>
                                 <option value="">-- Select Employee --</option>
                                 @foreach($employees as $emp)
                                 <option value="{{ $emp->id }}">{{ $emp->first_name }} {{ $emp->last_name }}</option>

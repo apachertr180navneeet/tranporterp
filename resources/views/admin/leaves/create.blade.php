@@ -30,7 +30,7 @@
                         @csrf
                         <div class="mb-3">
                             <label class="form-label fw-semibold text-dark">Leave Type <span class="text-danger">*</span></label>
-                            <select name="leave_type" class="form-select select2" required>
+                            <select name="leave_type" class="form-select" required>
                                 <option value="">Select type</option>
                                 <option value="sick">Sick Leave</option>
                                 <option value="casual">Casual Leave</option>

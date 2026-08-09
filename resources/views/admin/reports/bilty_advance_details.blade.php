@@ -1,21 +1,5 @@
 @extends('admin.layouts.app')
 
-@section('style')
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-<style>
-    .select2-container--default .select2-selection--single {
-        height: 38px;
-        padding: 5px 8px;
-    }
-    .select2-container--default .select2-selection--single .select2-selection__rendered {
-        line-height: 24px;
-    }
-    .select2-container--default .select2-selection--single .select2-selection__arrow {
-        height: 36px;
-    }
-</style>
-@endsection
-
 @section('content')
 <div class="container-fluid flex-grow-1 container-p-y">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
@@ -71,7 +55,7 @@
                     <!-- LR Selection -->
                     <div class="col-md-3">
                         <label class="form-label fw-semibold" for="bulty_id">Select LR (Lorry Receipt) <span class="text-danger">*</span></label>
-                        <select name="bulty_id" id="bulty_id" class="form-select select2 @error('bulty_id') is-invalid @enderror" required>
+                        <select name="bulty_id" id="bulty_id" class="form-select @error('bulty_id') is-invalid @enderror" required>
                             <option value="">-- Select LR Number --</option>
                             @foreach($bulties as $bulty)
                                 <option value="{{ $bulty->id }}"
@@ -167,7 +151,7 @@
                     </div>
                     <div class="col-md-2">
                         <label class="form-label small">LR Number</label>
-                        <select name="bulty_id" class="form-select form-select-sm select2">
+                        <select name="bulty_id" class="form-select form-select-sm">
                             <option value="">All LRs</option>
                             @foreach($bulties as $b)
                                 <option value="{{ $b->id }}" {{ request('bulty_id') == $b->id ? 'selected' : '' }}>{{ $b->lr_no }}</option>
@@ -272,12 +256,8 @@
 @endsection
 
 @section('script')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
 $(document).ready(function() {
-    $('.select2').select2({
-        width: '100%'
-    });
 
     function updateCompanyAndBranch() {
         var selectedOption = $('#bulty_id').find(':selected');

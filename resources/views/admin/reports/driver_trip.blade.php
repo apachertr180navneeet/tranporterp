@@ -1,10 +1,5 @@
 @extends('admin.layouts.app')
 
-@section('style')
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-<style>.select2-container--default .select2-selection--single{height:38px;padding:5px 8px;}.select2-container--default .select2-selection--single .select2-selection__rendered{line-height:24px;}.select2-container--default .select2-selection--single .select2-selection__arrow{height:36px;}</style>
-@endsection
-
 @section('content')
 <div class="container-fluid flex-grow-1 container-p-y">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
@@ -32,7 +27,7 @@
             <form method="GET" action="{{ route('admin.reports.driver-trip') }}" class="mb-3 row g-2 align-items-end">
                 <div class="col-md-8">
                     <label class="form-label">Select Driver</label>
-                    <select name="driver_id" class="form-select select2" data-placeholder="Search driver...">
+                    <select name="driver_id" class="form-select">
                         <option value="">Select Driver</option>
                         @foreach($drivers as $driver)
                             <option value="{{ $driver->id }}" {{ request('driver_id') == $driver->id ? 'selected' : '' }}>{{ $driver->name }} ({{ $driver->phone ?? 'N/A' }})</option>
@@ -108,11 +103,4 @@
         </div>
     </div>
 </div>
-@endsection
-
-@section('script')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-<script>
-$(function(){ $('.select2').select2({ width: '100%' }); });
-</script>
 @endsection

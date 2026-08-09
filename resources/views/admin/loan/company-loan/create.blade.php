@@ -34,19 +34,19 @@
                     @else
                     <input type="hidden" name="company_id" value="{{ auth()->user()->company_id }}">
                     @endif
-                    <div class="col-md-6">
+                    <div class="col-md-6 mb-3">
                         <label class="form-label">Bank <span class="text-danger">*</span></label>
-                        <select name="bank_id" id="bank_id" class="form-select select2 @error('bank_id') is-invalid @enderror" required>
+                        <select name="bank_id" id="bank_id" class="form-select @error('bank_id') is-invalid @enderror" required>
                             <option value="">Select Bank</option>
                             @foreach($banks as $bank)
                                 <option value="{{ $bank->id }}" {{ old('bank_id') == $bank->id ? 'selected' : '' }}>{{ $bank->name }}</option>
                             @endforeach
                         </select>
-                        @error('bank_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        @error('bank_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Branch <span class="text-danger">*</span></label>
-                        <select name="branch_id" id="branch_id" class="form-select select2 @error('branch_id') is-invalid @enderror" required>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Company Branch <span class="text-danger">*</span></label>
+                        <select name="branch_id" id="branch_id" class="form-select @error('branch_id') is-invalid @enderror" required>
                             <option value="">Select Bank First</option>
                         </select>
                         @error('branch_id')<div class="invalid-feedback">{{ $message }}</div>@enderror

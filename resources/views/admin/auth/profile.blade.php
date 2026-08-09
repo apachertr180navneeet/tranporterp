@@ -224,25 +224,8 @@
 
 @section('script')
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-<style>
-    .select2-container .select2-selection--single { height: 38px; border: 1px solid #d9dee3; }
-    .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 36px; }
-    .select2-container--default .select2-selection--single .select2-selection__arrow { height: 36px; }
-    .select2-dropdown { border: 1px solid #d9dee3; border-radius: 0.375rem; }
-    .select2-search__field { border: 1px solid #d9dee3; border-radius: 0.375rem; padding: 0.375rem 0.75rem; margin: 8px; width: calc(100% - 22px) !important; }
-    .select2-results__option { padding: 8px 16px; }
-    .select2-results__option--highlighted { background-color: rgba(67, 89, 113, 0.1) !important; color: #696cff !important; }
-</style>
 <script>
-    $(".timezone").select2().on('select2:opening', function(e) {
-        $(this).data('select2').$dropdown.find(':input.select2-search__field').attr('placeholder', 'Search your timezone')
-    })
-
     $(document).ready(function() {
-        $('#state, #city').select2({ placeholder: 'Search & Select State', width: '100%' });
-
         const stateSelect = document.getElementById('state');
         const citySelect = document.getElementById('city');
         const currentCity = "{{ $user->city }}";
@@ -250,7 +233,6 @@
         function loadCities() {
             const selectedState = stateSelect.value;
             citySelect.innerHTML = '<option value="">Select City</option>';
-            $('#city').select2('destroy').select2({ placeholder: 'Search & Select City', width: '100%' });
             if (!selectedState) return;
             $.ajax({
                 url: '{{ route("admin.users.get-cities") }}',
@@ -265,7 +247,6 @@
                         if (city === currentCity) option.selected = true;
                         citySelect.appendChild(option);
                     });
-                    $('#city').select2('destroy').select2({ placeholder: 'Search & Select City', width: '100%' });
                 }
             });
         }

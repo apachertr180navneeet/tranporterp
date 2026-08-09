@@ -33,7 +33,7 @@
             <form method="GET" action="{{ route('admin.maintenance.tyre-management.layout') }}" id="vehicle-select-form" class="row align-items-center g-3">
                 <div class="col-md-5">
                     <label class="form-label fw-semibold text-muted mb-1"><i class="bx bx-truck me-1"></i> Select Vehicle (Truck)</label>
-                    <select name="vehicle_id" id="vehicle_id" class="form-select form-select-lg fw-bold text-primary select2">
+                    <select name="vehicle_id" id="vehicle_id" class="form-select form-select-lg fw-bold text-primary">
                         @foreach($vehicles as $v)
                             <option value="{{ $v->id }}" {{ $selectedVehicleId == $v->id ? 'selected' : '' }}>
                                 {{ $v->vehicle_number }} {{ $v->vehicle_name ? '('.$v->vehicle_name.')' : '' }} {{ $v->brand ? '['.$v->brand.']' : '' }}

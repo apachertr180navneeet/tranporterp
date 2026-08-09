@@ -44,7 +44,7 @@
 
                     <div class="col-md-6">
                         <label class="form-label" for="tyre_brand_id">Tyre Brand (Optional)</label>
-                        <select id="tyre_brand_id" name="tyre_brand_id" class="form-select select2 @error('tyre_brand_id') is-invalid @enderror">
+                        <select id="tyre_brand_id" name="tyre_brand_id" class="form-select @error('tyre_brand_id') is-invalid @enderror">
                             <option value="">All / Standalone Brand</option>
                             @foreach($brands as $brand)
                                 <option value="{{ $brand->id }}" {{ old('tyre_brand_id') == $brand->id ? 'selected' : '' }}>{{ $brand->name }}</option>
@@ -57,7 +57,7 @@
 
                     <div class="col-md-6">
                         <label class="form-label" for="tyre_model_id">Tyre Model (Optional)</label>
-                        <select id="tyre_model_id" name="tyre_model_id" class="form-select select2 @error('tyre_model_id') is-invalid @enderror">
+                        <select id="tyre_model_id" name="tyre_model_id" class="form-select @error('tyre_model_id') is-invalid @enderror">
                             <option value="">Select Model</option>
                             @foreach($models as $model)
                                 <option value="{{ $model->id }}" data-brand-id="{{ $model->tyre_brand_id }}" {{ old('tyre_model_id') == $model->id ? 'selected' : '' }}>
@@ -72,7 +72,7 @@
 
                     <div class="col-md-6">
                         <label class="form-label" for="status">Status <span class="text-danger">*</span></label>
-                        <select id="status" name="status" class="form-select select2 @error('status') is-invalid @enderror" required>
+                        <select id="status" name="status" class="form-select @error('status') is-invalid @enderror" required>
                             <option value="active" {{ old('status', 'active') == 'active' ? 'selected' : '' }}>Active</option>
                             <option value="inactive" {{ old('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>
                         </select>

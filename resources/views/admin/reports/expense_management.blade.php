@@ -29,7 +29,7 @@
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Vehicle</label>
-                        <select name="vehicle_id" class="form-select select2">
+                        <select name="vehicle_id" class="form-select">
                             <option value="">All Vehicles</option>
                             @foreach(\App\Models\Vehicle::where('status', 'active')->orderBy('vehicle_number')->get() as $vehicle)
                                 <option value="{{ $vehicle->id }}" {{ request('vehicle_id') == $vehicle->id ? 'selected' : '' }}>

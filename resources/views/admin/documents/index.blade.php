@@ -43,7 +43,7 @@
                 @if(auth()->user()->isSuperAdmin())
                 <div class="col-md-2">
                     <label class="form-label fw-semibold">Company</label>
-                    <select id="filterCompany" class="form-select select2">
+                    <select id="filterCompany" class="form-select">
                         <option value="">All Companies</option>
                         @foreach($companies as $comp)
                         <option value="{{ $comp->id }}">{{ $comp->name }}</option>
@@ -54,7 +54,7 @@
 
                 <div class="col-md-2">
                     <label class="form-label fw-semibold">Branch</label>
-                    <select id="filterBranch" class="form-select select2">
+                    <select id="filterBranch" class="form-select">
                         <option value="">All Branches</option>
                         @foreach($branches as $branch)
                         <option value="{{ $branch->id }}">{{ $branch->name }}</option>
@@ -64,7 +64,7 @@
 
                 <div class="col-md-2">
                     <label class="form-label fw-semibold">Category</label>
-                    <select id="filterCategory" class="form-select select2">
+                    <select id="filterCategory" class="form-select">
                         <option value="">All Categories</option>
                         @foreach($categories as $cat)
                         <option value="{{ $cat->id }}">{{ $cat->name }}</option>
@@ -74,7 +74,7 @@
 
                 <div class="col-md-2">
                     <label class="form-label fw-semibold">Folder</label>
-                    <select id="filterFolder" class="form-select select2">
+                    <select id="filterFolder" class="form-select">
                         <option value="">All Folders</option>
                         @foreach($folders as $f)
                         <option value="{{ $f->id }}">{{ $f->name }}</option>
@@ -84,7 +84,7 @@
 
                 <div class="col-md-2">
                     <label class="form-label fw-semibold">Expiry Filter</label>
-                    <select id="filterExpiry" class="form-select select2">
+                    <select id="filterExpiry" class="form-select">
                         <option value="">Any Expiry Date</option>
                         <option value="today">Expiring Today</option>
                         <option value="7_days">Expiring in 7 Days</option>
@@ -96,7 +96,7 @@
 
                 <div class="col-md-2">
                     <label class="form-label fw-semibold">File Status</label>
-                    <select id="filterStatus" class="form-select select2">
+                    <select id="filterStatus" class="form-select">
                         <option value="">All Statuses</option>
                         <option value="active">Active</option>
                         <option value="archived">Archived</option>
@@ -266,22 +266,9 @@ $(document).ready(function() {
     });
 
     // Dynamic branch loading when company filter changes
-    $(document).on('change select2:select', '#filterCompany', function() {
+    $(document).on('change', '#filterCompany', function() {
         var companyId = $(this).val();
         var $branchSelect = $('#filterBranch');
-
-        function updateBranchOptions(optionsHtml) {
-            if ($branchSelect.data('select2')) {
-                $branchSelect.select2('destroy');
-            }
-            $branchSelect.html(optionsHtml);
-            if (typeof window.initGlobalSelect2 === 'function') {
-                window.initGlobalSelect2();
-            } else if ($.fn.select2) {
-                $branchSelect.select2();
-            }
-            table.draw();
-        }
 
         if (companyId) {
             $.ajax({
@@ -295,29 +282,28 @@ $(document).ready(function() {
                             options += '<option value="' + b.id + '">' + b.name + '</option>';
                         });
                     }
-                    updateBranchOptions(options);
+                    $branchSelect.html(options);
+                    table.draw();
                 },
                 error: function() {
-                    updateBranchOptions('<option value="">All Branches</option>');
+                    $branchSelect.html('<option value="">All Branches</option>');
+                    table.draw();
                 }
             });
         } else {
-            updateBranchOptions('<option value="">All Branches</option>');
+            $branchSelect.html('<option value="">All Branches</option>');
+            table.draw();
         }
     });
 
-    // Real-time filter triggers for input, select & select2
-    $(document).on('change select2:select keyup input', '#searchTerm, #filterCompany, #filterCategory, #filterFolder, #filterBranch, #filterExpiry, #filterStatus', function() {
+    // Real-time filter triggers for input and select
+    $(document).on('change keyup input', '#searchTerm, #filterCompany, #filterCategory, #filterFolder, #filterBranch, #filterExpiry, #filterStatus', function() {
         table.draw();
     });
 
     $('#btnResetFilters').on('click', function() {
         $('#filterForm')[0].reset();
-        $('#filterForm select').each(function() {
-            if ($(this).data('select2')) {
-                $(this).val('').trigger('change.select2');
-            }
-        });
+        $('#filterForm select').val('');
         table.draw();
     });
 

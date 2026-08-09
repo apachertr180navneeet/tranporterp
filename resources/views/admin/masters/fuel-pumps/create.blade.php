@@ -1,14 +1,5 @@
 @extends('admin.layouts.app')
 
-@section('style')
-<style>
-.select2-container--default .select2-selection--single { height: 38px; border: 1px solid #d9dee3; }
-.select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 36px; }
-.select2-container--default .select2-selection--single .select2-selection__arrow { height: 36px; }
-.select2-container { width: 100% !important; }
-</style>
-@endsection
-
 @section('content')
 <div class="container-fluid flex-grow-1 container-p-y">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
@@ -31,7 +22,7 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Fuel Company</label>
-                        <select name="fuel_company_id" class="form-select select2 @error('fuel_company_id') is-invalid @enderror">
+                        <select name="fuel_company_id" class="form-select @error('fuel_company_id') is-invalid @enderror">
                             <option value="">Select Fuel Company</option>
                             @foreach($fuelCompanies as $fuelCompany)
                             <option value="{{ $fuelCompany->id }}" {{ old('fuel_company_id') == $fuelCompany->id ? 'selected' : '' }}>{{ $fuelCompany->name }}</option>
@@ -73,16 +64,4 @@
         </div>
     </div>
 </div>
-@endsection
-
-@section('script')
-<script>
-$(document).ready(function() {
-    if (typeof window.initGlobalSelect2 === 'function') {
-        window.initGlobalSelect2();
-    } else if ($.fn.select2) {
-        $('.select2').select2({ width: '100%' });
-    }
-});
-</script>
 @endsection

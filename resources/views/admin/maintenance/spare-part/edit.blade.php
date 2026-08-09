@@ -34,7 +34,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Vehicle</label>
-                        <select name="vehicle_id" class="form-select select2 @error('vehicle_id') is-invalid @enderror">
+                        <select name="vehicle_id" class="form-select @error('vehicle_id') is-invalid @enderror">
                             <option value="">Select Vehicle</option>
                             @foreach($vehicles as $vehicle)
                                 <option value="{{ $vehicle->id }}" {{ (old('vehicle_id', $sparePart->vehicle_id) == $vehicle->id) ? 'selected' : '' }}>{{ $vehicle->vehicle_number }}</option>

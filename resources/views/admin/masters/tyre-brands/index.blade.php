@@ -25,7 +25,7 @@
                     <input type="text" name="search" class="form-control" placeholder="Search by brand name, code, or description..." value="{{ request('search') }}">
                 </div>
                 <div class="col-md-3">
-                    <select name="status" class="form-select select2">
+                    <select name="status" class="form-select">
                         <option value="">All Status</option>
                         <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
                         <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Inactive</option>

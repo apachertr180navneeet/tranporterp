@@ -54,7 +54,7 @@
                             @enderror
                         </div>
                         <div class="col-md-6"><label class="form-label">State *</label><select name="state" id="state"
-                                class="form-select select2 @error('state') is-invalid @enderror" required>
+                                class="form-select @error('state') is-invalid @enderror" required>
                                 <option value="">Select State</option>
                                 @foreach (array_keys($states) as $stateName)
                                     <option value="{{ $stateName }}"
@@ -67,7 +67,7 @@
                             @enderror
                         </div>
                         <div class="col-md-6"><label class="form-label">City *</label><select name="city" id="city"
-                                class="form-select select2 @error('city') is-invalid @enderror" required>
+                                class="form-select @error('city') is-invalid @enderror" required>
                                 <option value="">Select City</option>
                             </select>
                             @error('city')
@@ -95,58 +95,11 @@
         const statesCitiesData = @json($cities);
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-    <style>
-        .select2-container .select2-selection--single {
-            height: 38px;
-            border: 1px solid #d9dee3;
-        }
-
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            line-height: 36px;
-        }
-
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 36px;
-        }
-
-        .select2-dropdown {
-            border: 1px solid #d9dee3;
-            border-radius: 0.375rem;
-        }
-
-        .select2-search__field {
-            border: 1px solid #d9dee3;
-            border-radius: 0.375rem;
-            padding: 0.375rem 0.75rem;
-            margin: 8px;
-            width: calc(100% - 22px) !important;
-        }
-
-        .select2-results__option {
-            padding: 8px 16px;
-        }
-
-        .select2-results__option--highlighted {
-            background-color: rgba(67, 89, 113, 0.1) !important;
-            color: #696cff !important;
-        }
-
-        .is-invalid+.select2-container .select2-selection--single {
-            border-color: #ff3e1d !important;
-        }
-    </style>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const stateSelect = document.getElementById('state');
             const citySelect = document.getElementById('city');
             const currentCity = "{{ $branch->city }}";
-
-            $('#state, #city').select2({
-                placeholder: 'Search & Select',
-                width: '100%'
-            });
 
             function loadCities() {
                 const selectedState = stateSelect.value;
@@ -213,11 +166,7 @@
                 },
                 errorPlacement: function(error, element) {
                     error.addClass('invalid-feedback');
-                    if ($(element).hasClass('select2-hidden-accessible')) {
-                        error.insertAfter(element.next('.select2-container'));
-                    } else {
-                        error.insertAfter(element);
-                    }
+                    error.insertAfter(element);
                     element.addClass('is-invalid');
                 },
                 highlight: function(element) {

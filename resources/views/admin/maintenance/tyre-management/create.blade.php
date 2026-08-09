@@ -26,7 +26,7 @@
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Vehicle <span class="text-danger">*</span></label>
-                        <select name="vehicle_id" class="form-select select2 @error('vehicle_id') is-invalid @enderror" required>
+                        <select name="vehicle_id" class="form-select @error('vehicle_id') is-invalid @enderror" required>
                             <option value="">Select Vehicle</option>
                             @foreach($vehicles as $vehicle)
                                 <option value="{{ $vehicle->id }}" {{ old('vehicle_id') == $vehicle->id ? 'selected' : '' }}>{{ $vehicle->vehicle_number }}</option>
@@ -36,7 +36,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Tyre Position <span class="text-danger">*</span></label>
-                        <select name="tyre_position" class="form-select select2 @error('tyre_position') is-invalid @enderror" required>
+                        <select name="tyre_position" class="form-select @error('tyre_position') is-invalid @enderror" required>
                             <option value="">Select Position</option>
                             <optgroup label="Left Side (8 Slots)">
                                 <option value="L1" {{ old('tyre_position') == 'L1' ? 'selected' : '' }}>L1 - Front Left (Steering)</option>
@@ -79,7 +79,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Tyre Brand <span class="text-danger">*</span></label>
-                        <select name="tyre_brand" id="tyre_brand_select" class="form-select select2 @error('tyre_brand') is-invalid @enderror" required>
+                        <select name="tyre_brand" id="tyre_brand_select" class="form-select @error('tyre_brand') is-invalid @enderror" required>
                             <option value="">Select Brand</option>
                             @foreach($brands as $brand)
                                 <option value="{{ $brand->name }}" data-id="{{ $brand->id }}" {{ old('tyre_brand') == $brand->name ? 'selected' : '' }}>{{ $brand->name }}</option>
@@ -92,7 +92,7 @@
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Tyre Model</label>
-                        <select name="tyre_model" id="tyre_model_select" class="form-select select2 @error('tyre_model') is-invalid @enderror">
+                        <select name="tyre_model" id="tyre_model_select" class="form-select @error('tyre_model') is-invalid @enderror">
                             <option value="">Select Model</option>
                             @foreach($models as $model)
                                 <option value="{{ $model->name }}" data-id="{{ $model->id }}" {{ old('tyre_model') == $model->name ? 'selected' : '' }}>{{ $model->name }}</option>
@@ -102,7 +102,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Tyre Size <span class="text-danger">*</span></label>
-                        <select name="tyre_size" id="tyre_size_select" class="form-select select2 @error('tyre_size') is-invalid @enderror" required>
+                        <select name="tyre_size" id="tyre_size_select" class="form-select @error('tyre_size') is-invalid @enderror" required>
                             <option value="">Select Size</option>
                             @foreach($sizes as $size)
                                 <option value="{{ $size->name }}" {{ old('tyre_size') == $size->name ? 'selected' : '' }}>{{ $size->name }}</option>
@@ -160,7 +160,7 @@
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label">Status</label>
-                        <select name="status" class="form-select select2 @error('status') is-invalid @enderror">
+                        <select name="status" class="form-select @error('status') is-invalid @enderror">
                             <option value="active" {{ old('status', 'active') == 'active' ? 'selected' : '' }}>Active</option>
                             <option value="removed" {{ old('status') == 'removed' ? 'selected' : '' }}>Removed</option>
                             <option value="scrap" {{ old('status') == 'scrap' ? 'selected' : '' }}>Scrap</option>
@@ -183,7 +183,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Removal Reason</label>
-                        <select name="removal_reason" class="form-select select2 @error('removal_reason') is-invalid @enderror">
+                        <select name="removal_reason" class="form-select @error('removal_reason') is-invalid @enderror">
                             <option value="">Select Reason</option>
                             <option value="Worn Out" {{ old('removal_reason') == 'Worn Out' ? 'selected' : '' }}>Worn Out</option>
                             <option value="Puncture / Damage" {{ old('removal_reason') == 'Puncture / Damage' ? 'selected' : '' }}>Puncture / Damage</option>

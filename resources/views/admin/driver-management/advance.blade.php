@@ -1,10 +1,5 @@
 @extends('admin.layouts.app')
 
-@section('style')
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-<style>.select2-container--default .select2-selection--single{height:38px;padding:5px 8px;}.select2-container--default .select2-selection--single .select2-selection__rendered{line-height:24px;}.select2-container--default .select2-selection--single .select2-selection__arrow{height:36px;}</style>
-@endsection
-
 @section('content')
 <div class="container-fluid flex-grow-1 container-p-y">
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
@@ -42,7 +37,7 @@
                 <div class="row">
                     <div class="col-md-3 mb-3">
                         <label class="form-label">Driver <span class="text-danger">*</span></label>
-                        <select name="driver_id" class="form-select select2 @error('driver_id') is-invalid @enderror" data-placeholder="Search driver..." required>
+                        <select name="driver_id" class="form-select @error('driver_id') is-invalid @enderror" required>
                             <option value="">Select Driver</option>
                             @foreach($drivers as $driver)
                                 <option value="{{ $driver->id }}" {{ old('driver_id', $editAdvance?->driver_id) == $driver->id ? 'selected' : '' }}>{{ $driver->name }} ({{ $driver->phone ?? 'N/A' }}) @if($driver->driver_id)[{{ $driver->driver_id }}]@endif</option>
@@ -154,13 +149,11 @@
 @endsection
 
 @section('script')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <script>
 document.querySelectorAll('input[name="deduction_type"]').forEach(function(radio) {
     radio.addEventListener('change', function() {
         document.getElementById('monthly_deduction_field').style.display = this.value === 'monthly' ? '' : 'none';
     });
 });
-$(function(){ $('.select2').select2({ width: '100%' }); });
 </script>
 @endsection

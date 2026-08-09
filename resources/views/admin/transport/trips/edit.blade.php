@@ -1,11 +1,7 @@
 @extends('admin.layouts.app')
 
 @section('style')
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 <style>
-.select2-container--default .select2-selection--single { height: calc(1.5em + .5rem + 2px); border: 1px solid #d9dee3; border-radius: var(--bs-border-radius); font-size: .75rem; }
-.select2-container--default .select2-selection--single .select2-selection__rendered { line-height: calc(1.5em + .5rem); padding-left: .5rem; font-size: .75rem; color: #697a8d; }
-.select2-container--default .select2-selection--single .select2-selection__arrow { height: calc(1.5em + .5rem); }
 .table-sm-compact > :not(caption) > * > * { padding: .2rem .3rem; font-size: .75rem; white-space: nowrap; }
 </style>
 @endsection
@@ -684,23 +680,11 @@
 @endsection
 
 @section('script')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     $(document).ready(function() {
         var pumpsUrl = '{{ route("admin.transport.trips.pumps-by-company", ":companyId") }}';
-
-        $('.fuel-company-select').select2({ width: '100%', placeholder: 'Select Company', allowClear: true });
-        $('.fuel-pump-select').select2({ width: '100%', placeholder: 'Select Pump', allowClear: true });
-        $('.adblue-company-select').select2({ width: '100%', placeholder: 'Select Company', allowClear: true });
-        $('.advance-company-select').select2({ width: '100%', placeholder: 'Select Company', allowClear: true });
-        $('.advance-pump-select').select2({ width: '100%', placeholder: 'Select Pump', allowClear: true });
-        $('#modalAdBlueCompany').select2({ width: '100%', placeholder: 'Select Company', allowClear: true, dropdownParent: '#importAdBlueModal' });
-        $('#modalFuelCompany').select2({ width: '100%', placeholder: 'Select Company', allowClear: true, dropdownParent: '#importFuelModal' });
-        $('#modalFuelPump').select2({ width: '100%', placeholder: 'Select Pump', allowClear: true, dropdownParent: '#importFuelModal' });
-        $('#modalAdvanceCompany').select2({ width: '100%', placeholder: 'Select Company', allowClear: true, dropdownParent: '#importAdvanceModal' });
-        $('#modalAdvancePump').select2({ width: '100%', placeholder: 'Select Pump', allowClear: true, dropdownParent: '#importAdvanceModal' });
 
         function loadPumps(companySelect, selectedPumpId) {
             const companyId = companySelect.val();
@@ -869,8 +853,6 @@
                             $('#fuelContainer').append(html);
                         });
                         const newCnt = res.data.length;
-                        $('#fuelContainer').find('.fuel-company-select').slice(-newCnt).select2({ width: '100%', placeholder: 'Select Company', allowClear: true });
-                        $('#fuelContainer').find('.fuel-pump-select').slice(-newCnt).select2({ width: '100%', placeholder: 'Select Pump', allowClear: true });
                         $('#fuelContainer').find('.fuel-company-select').slice(-newCnt).each(function(i) {
                             if ($(this).val()) {
                                 loadPumps($(this), res.data[i]?.fuel_pump_id);
@@ -935,7 +917,6 @@
                             </tr>`;
                             $('#adblueContainer').append(html);
                         });
-                        $('#adblueContainer').find('.adblue-company-select').select2({ width: '100%', placeholder: 'Select Company', allowClear: true });
                         recalcTotals();
                         $('#importAdBlueModal').modal('hide');
                     }
@@ -1174,8 +1155,6 @@
                 </div>
             </div>`;
             $('#fuelContainer').append(html);
-            $('#fuelContainer').find('.fuel-company-select').last().select2({ width: '100%', placeholder: 'Select Company', allowClear: true });
-            $('#fuelContainer').find('.fuel-pump-select').last().select2({ width: '100%', placeholder: 'Select Pump', allowClear: true });
         });
 
         $('#addAdBlueRow').click(function() {
@@ -1205,7 +1184,6 @@
                 <td><button type="button" class="btn btn-sm btn-outline-danger remove-row"><i class="bx bx-trash"></i></button></td>
             </tr>`;
             $('#adblueContainer').append(html);
-            $('#adblueContainer').find('.adblue-company-select').last().select2({ width: '100%', placeholder: 'Select Company', allowClear: true });
         });
 
         $('#submitOtherImport').click(function() {
@@ -1317,8 +1295,6 @@
                             $('#advanceContainer').append(html);
                         });
                         const newCnt = res.data.length;
-                        $('#advanceContainer').find('.advance-company-select').slice(-newCnt).select2({ width: '100%', placeholder: 'Select Company', allowClear: true });
-                        $('#advanceContainer').find('.advance-pump-select').slice(-newCnt).select2({ width: '100%', placeholder: 'Select Pump', allowClear: true });
                         $('#advanceContainer').find('.advance-company-select').slice(-newCnt).each(function(i) {
                             if ($(this).val()) {
                                 loadPumps($(this), res.data[i]?.fuel_pump_id);
@@ -1398,8 +1374,6 @@
                 </div>
             </div>`;
             $('#advanceContainer').append(html);
-            $('#advanceContainer').find('.advance-company-select').last().select2({ width: '100%', placeholder: 'Select Company', allowClear: true });
-            $('#advanceContainer').find('.advance-pump-select').last().select2({ width: '100%', placeholder: 'Select Pump', allowClear: true });
         });
 
         $(document).on('click', '.remove-row', function() {

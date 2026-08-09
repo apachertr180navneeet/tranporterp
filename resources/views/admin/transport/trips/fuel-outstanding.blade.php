@@ -546,7 +546,7 @@
         var filterComp = $('#filter_company_id').length ? $('#filter_company_id').val() : '';
         var targetCompany = filterComp ? filterComp : '{{ session("current_company_id") != "all" ? session("current_company_id") : "" }}';
 
-        // Reset select2 selects properly
+        // Reset select dropdowns properly
         $('#pay_company_id').val('').trigger('change');
         $('#pay_fuel_company_id').val('').trigger('change');
         $('#pay_fuel_pump_id').empty().append('<option value="">Select Pump</option>').trigger('change');

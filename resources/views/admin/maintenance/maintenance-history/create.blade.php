@@ -26,7 +26,7 @@
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Vehicle <span class="text-danger">*</span></label>
-                        <select name="vehicle_id" class="form-select select2 @error('vehicle_id') is-invalid @enderror" required>
+                        <select name="vehicle_id" class="form-select @error('vehicle_id') is-invalid @enderror" required>
                             <option value="">Select Vehicle</option>
                             @foreach($vehicles as $vehicle)
                                 <option value="{{ $vehicle->id }}" {{ old('vehicle_id') == $vehicle->id ? 'selected' : '' }}>{{ $vehicle->vehicle_number }}</option>
@@ -36,7 +36,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Service Type <span class="text-danger">*</span></label>
-                        <select name="service_type" class="form-select select2 @error('service_type') is-invalid @enderror" required>
+                        <select name="service_type" class="form-select @error('service_type') is-invalid @enderror" required>
                             <option value="">Select Type</option>
                             <option value="Oil Change" {{ old('service_type') == 'Oil Change' ? 'selected' : '' }}>Oil Change</option>
                             <option value="General Service" {{ old('service_type') == 'General Service' ? 'selected' : '' }}>General Service</option>
@@ -68,7 +68,7 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Vendor</label>
-                        <select name="vendor_id" class="form-select select2 @error('vendor_id') is-invalid @enderror">
+                        <select name="vendor_id" class="form-select @error('vendor_id') is-invalid @enderror">
                             <option value="">Select Vendor</option>
                             @foreach($vendors as $vendor)
                                 <option value="{{ $vendor->id }}" {{ old('vendor_id') == $vendor->id ? 'selected' : '' }}>{{ $vendor->name }} {{ $vendor->vendor_code ? '(' . $vendor->vendor_code . ')' : '' }}</option>

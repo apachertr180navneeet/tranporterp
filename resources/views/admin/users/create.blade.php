@@ -195,10 +195,11 @@ $(document).ready(function() {
                     $.each(data, function(key, value) {
                         $('#branch_id').append('<option value="' + value.id + '">' + value.name + '</option>');
                     });
+                    $('#branch_id').trigger('change');
                 }
             });
         } else {
-            $('#branch_id').empty().append('<option value="">Select Branch</option>');
+            $('#branch_id').empty().append('<option value="">Select Branch</option>').trigger('change');
         }
     });
 });

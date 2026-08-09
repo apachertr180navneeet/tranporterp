@@ -287,14 +287,14 @@ $(document).ready(function() {
                     $.each(data, function(index, branch) {
                         options += '<option value="' + branch.id + '">' + branch.name + '</option>';
                     });
-                    $branchSelect.html(options);
+                    $branchSelect.html(options).trigger('change');
                 },
                 error: function() {
-                    $branchSelect.html('<option value="">All Branches</option>');
+                    $branchSelect.html('<option value="">All Branches</option>').trigger('change');
                 }
             });
         } else {
-            $branchSelect.html('<option value="">All Branches</option>');
+            $branchSelect.html('<option value="">All Branches</option>').trigger('change');
         }
     });
 });

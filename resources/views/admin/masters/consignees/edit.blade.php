@@ -60,11 +60,12 @@
                         if (selectedBranchId && !found && selectedBranchName) {
                             $('#branch_id').append('<option value="' + selectedBranchId + '" selected>' + selectedBranchName + '</option>');
                         }
+                        $('#branch_id').trigger('change');
                     }
                 });
             } else {
                 $('#branch_id').empty();
-                $('#branch_id').append('<option value="">Select Branch</option>');
+                $('#branch_id').append('<option value="">Select Branch</option>').trigger('change');
             }
         }
 

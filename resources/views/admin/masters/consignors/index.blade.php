@@ -135,10 +135,11 @@
                             var selected = branch.id == selectedBranchId ? 'selected' : '';
                             $('#import_branch_id').append('<option value="' + branch.id + '" ' + selected + '>' + branch.name + '</option>');
                         });
+                        $('#import_branch_id').trigger('change');
                     }
                 });
             } else {
-                $('#import_branch_id').empty().append('<option value="">Select Branch</option>');
+                $('#import_branch_id').empty().append('<option value="">Select Branch</option>').trigger('change');
             }
         }
         $('#import_company_id').change(function() { loadImportBranches($(this).val(), null); });

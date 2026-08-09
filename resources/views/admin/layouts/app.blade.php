@@ -111,11 +111,15 @@
                             $target.each(function() {
                                 var $this = $(this);
                                 if ($this.data('select2')) return;
-                                var placeholder = $this.attr('placeholder') || $this.find('option:first-child').text() || 'Select an option';
+                                var firstEmpty = $this.find('option[value=""]');
+                                var placeholderText = $this.attr('placeholder') || (firstEmpty.length ? firstEmpty.text() : ($this.find('option:first-child').text() || 'Select an option'));
                                 var allowClear = !$this.prop('required');
                                 var $modal = $this.closest('.modal');
                                 var selectConfig = {
-                                    placeholder: placeholder,
+                                    placeholder: {
+                                        id: '',
+                                        text: placeholderText
+                                    },
                                     allowClear: allowClear,
                                     width: '100%'
                                 };
@@ -130,6 +134,15 @@
 
                         $(document).on('shown.bs.modal', '.modal', function() {
                             initGlobalSelect2(this);
+                        });
+
+                        $(document).on('submit', 'form', function() {
+                            $(this).find('.select2').each(function() {
+                                var val = $(this).val();
+                                if (val !== null && val !== undefined) {
+                                    $(this).val(val);
+                                }
+                            });
                         });
                     });
                 </script>

@@ -124,8 +124,9 @@
                 $.ajax({ url: '{{ url("admin/users/get-branches") }}/' + companyId, type: 'GET', success: function(data) {
                     $('#import_branch_id').empty().append('<option value="">Select Branch</option>');
                     $.each(data, function(k, b) { $('#import_branch_id').append('<option value="' + b.id + '">' + b.name + '</option>'); });
+                    $('#import_branch_id').trigger('change');
                 }});
-            } else { $('#import_branch_id').empty().append('<option value="">Select Branch</option>'); }
+            } else { $('#import_branch_id').empty().append('<option value="">Select Branch</option>').trigger('change'); }
         }
         $('#import_company_id').change(function() { loadBranches($(this).val()); });
     });

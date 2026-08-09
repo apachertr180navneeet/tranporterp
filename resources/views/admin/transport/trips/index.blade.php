@@ -63,11 +63,22 @@
                                 $tripStatus = $trip->trip?->status ?? 'pending';
                             @endphp
                             @if($trip->trip)
-                            <select class="form-select form-select-sm status-select" data-id="{{ $trip->trip->id }}" style="min-width:90px" {{ $tripStatus == 'complete' ? 'disabled' : '' }}>
-                                <option value="pending" {{ $tripStatus == 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="complete" {{ $tripStatus == 'complete' ? 'selected' : '' }}>Complete</option>
-                                <option value="reject" {{ $tripStatus == 'reject' ? 'selected' : '' }}>Reject</option>
-                            </select>
+                                @can('edit trips')
+                                <select class="form-select form-select-sm status-select" data-id="{{ $trip->trip->id }}" style="min-width:90px" {{ $tripStatus == 'complete' ? 'disabled' : '' }}>
+                                    <option value="pending" {{ $tripStatus == 'pending' ? 'selected' : '' }}>Pending</option>
+                                    <option value="complete" {{ $tripStatus == 'complete' ? 'selected' : '' }}>Complete</option>
+                                    <option value="reject" {{ $tripStatus == 'reject' ? 'selected' : '' }}>Reject</option>
+                                </select>
+                                @else
+                                @php
+                                    $statusBadges = [
+                                        'pending' => 'bg-label-warning',
+                                        'complete' => 'bg-label-success',
+                                        'reject' => 'bg-label-danger'
+                                    ];
+                                @endphp
+                                <span class="badge {{ $statusBadges[$tripStatus] ?? 'bg-label-warning' }}">{{ ucfirst($tripStatus) }}</span>
+                                @endcan
                             @else
                             <span class="badge bg-label-warning">Pending</span>
                             @endif
@@ -75,17 +86,23 @@
                         <td class="text-end">
                             <div class="d-inline-flex gap-1">
                                 @if($trip->trip)
-                                <a href="{{ route('admin.transport.trips.edit', $trip->trip->id) }}" class="btn btn-sm btn-icon btn-outline-warning" title="Edit Trip">
-                                    <i class="bx bx-edit"></i>
-                                </a>
+                                    @can('edit trips')
+                                    <a href="{{ route('admin.transport.trips.edit', $trip->trip->id) }}" class="btn btn-sm btn-icon btn-outline-warning" title="Edit Trip">
+                                        <i class="bx bx-edit"></i>
+                                    </a>
+                                    @endcan
                                 @else
-                                <a href="{{ route('admin.transport.trips.create', $trip->id) }}" class="btn btn-sm btn-icon btn-outline-success" title="Add Trip">
-                                    <i class="bx bx-plus-circle"></i>
-                                </a>
+                                    @can('create trips')
+                                    <a href="{{ route('admin.transport.trips.create', $trip->id) }}" class="btn btn-sm btn-icon btn-outline-success" title="Add Trip">
+                                        <i class="bx bx-plus-circle"></i>
+                                    </a>
+                                    @endcan
                                 @endif
+                                @can('view bulties')
                                 <a href="{{ route('admin.transport.bulties.show', $trip->id) }}" class="btn btn-sm btn-icon btn-outline-primary" title="View">
                                     <i class="bx bx-show"></i>
                                 </a>
+                                @endcan
                                 @if($trip->material_document)
                                 <a href="{{ $trip->material_document }}" target="_blank" class="btn btn-sm btn-icon btn-outline-info" title="View Document">
                                     <i class="bx bx-file"></i>

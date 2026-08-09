@@ -33,6 +33,10 @@ class TripController extends Controller
 {
     public function index(Request $request)
     {
+        if (!auth()->user()->can('view trips')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $query = Bulty::with(['consignor', 'consignee', 'originCity', 'destinationCity', 'bultyItems', 'trip'])
             ->whereNotNull('material_document');
 
@@ -58,6 +62,10 @@ class TripController extends Controller
 
     public function create($builtyId)
     {
+        if (!auth()->user()->can('create trips')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $builty = Bulty::with(['consignor', 'consignee', 'originCity', 'destinationCity', 'bultyItems'])->findOrFail($builtyId);
         $fuelPumps = FuelPump::with('fuelCompany')->orderBy('name')->get();
         $fuelCompanies = FuelCompany::orderBy('name')->get();
@@ -69,6 +77,9 @@ class TripController extends Controller
 
     public function store(Request $request)
     {
+        if (!auth()->user()->can('create trips')) {
+            abort(403, 'Unauthorized action.');
+        }
         $validated = $request->validate([
             'builty_id' => 'required|exists:bulties,id|unique:trips,builty_id',
             'status' => 'nullable|in:pending,complete,reject',
@@ -224,6 +235,10 @@ class TripController extends Controller
 
     public function edit(Trip $trip)
     {
+        if (!auth()->user()->can('edit trips')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $trip->load(['builty.consignor', 'builty.consignee', 'builty.originCity', 'builty.destinationCity', 'builty.bultyItems', 'fastTagDetails', 'fuelDetails.fuelPump', 'otherAmountDetails', 'adblueDetails', 'advanceDetails']);
         $fuelPumps = FuelPump::with('fuelCompany')->orderBy('name')->get();
         $fuelCompanies = FuelCompany::orderBy('name')->get();
@@ -235,6 +250,9 @@ class TripController extends Controller
 
     public function update(Request $request, Trip $trip)
     {
+        if (!auth()->user()->can('edit trips')) {
+            abort(403, 'Unauthorized action.');
+        }
         $validated = $request->validate([
             'status' => 'nullable|in:pending,complete,reject',
             'fasttag_total_amount' => 'nullable|numeric|min:0',
@@ -391,6 +409,10 @@ class TripController extends Controller
 
     public function toggleStatus(Request $request, Trip $trip)
     {
+        if (!auth()->user()->can('edit trips')) {
+            return response()->json(['message' => 'Unauthorized action.'], 403);
+        }
+
         $newStatus = $request->input('status', 'pending');
         if (!in_array($newStatus, ['pending', 'complete', 'reject'])) {
             $newStatus = 'pending';

@@ -59,7 +59,7 @@
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary w-100">Generate</button>
+                            <button type="submit" class="btn btn-primary w-100">@can('generate driver salary slips') Generate @else View @endcan</button>
                         </div>
                     </form>
                 </div>
@@ -73,11 +73,12 @@
                         <small class="text-muted">{{ $slip->monthName }} {{ $slip->year }}</small>
                     </div>
                     <div class="d-flex gap-2">
-                        <button class="btn btn-outline-secondary btn-sm" onclick="window.location.href='{{ route('admin.driver-management.salary-slip') }}'"><i class="bx bx-save"></i> Save</button>
+                        @can('generate driver salary slips')
                         <form method="POST" action="{{ route('admin.driver-management.salary-slip.destroy', $slip->id) }}" class="d-inline" onsubmit="return confirm('Regenerate this slip? It will be deleted and re-created.')">
                             @csrf @method('DELETE')
                             <button type="submit" class="btn btn-outline-warning btn-sm"><i class="bx bx-refresh"></i> Regenerate</button>
                         </form>
+                        @endcan
                     </div>
                 </div>
                 <div class="card-body p-0">

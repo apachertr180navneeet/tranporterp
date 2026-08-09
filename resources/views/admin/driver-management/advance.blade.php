@@ -14,8 +14,14 @@
             </nav>
         </div>
         <div>
+            @can('view driver salary')
             <a href="{{ route('admin.driver-management.salary') }}" class="btn btn-outline-primary"><i class="bx bx-money me-1"></i> Salary Management</a>
-            <a href="{{ route('admin.driver-management.salary-slip') }}" class="btn btn-outline-primary"><i class="bx bx-receipt me-1"></i> Salary Slip</a>
+            @endcan
+            @can('generate driver salary slips')
+            <a href="{{ route('admin.driver-management.salary-slip') }}" class="btn btn-outline-primary"><i class="bx bx-receipt me-1"></i> Generate Slip</a>
+            @elsecan('view driver salary slips')
+            <a href="{{ route('admin.driver-management.salary-slip.list') }}" class="btn btn-outline-primary"><i class="bx bx-receipt me-1"></i> Salary Slips</a>
+            @endcan
         </div>
     </div>
 

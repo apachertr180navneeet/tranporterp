@@ -14,8 +14,12 @@
             </nav>
         </div>
         <div>
+            @can('generate driver salary slips')
             <a href="{{ route('admin.driver-management.salary-slip') }}" class="btn btn-outline-primary"><i class="bx bx-receipt me-1"></i> Generate Slip</a>
+            @endcan
+            @can('view driver salary')
             <a href="{{ route('admin.driver-management.salary') }}" class="btn btn-outline-primary"><i class="bx bx-money me-1"></i> Salary Management</a>
+            @endcan
         </div>
     </div>
 
@@ -52,11 +56,15 @@
                         <td class="text-end fw-semibold">₹ {{ number_format($slip->net_payable, 2) }}</td>
                         <td>{{ $slip->generated_at ? $slip->generated_at->format('d-m-Y') : '-' }}</td>
                         <td class="text-center">
+                            @canany(['view driver salary slips', 'generate driver salary slips'])
                             <a href="{{ route('admin.driver-management.salary-slip', ['driver_id' => $slip->driver_id, 'month' => $slip->month, 'year' => $slip->year]) }}" class="btn btn-sm btn-icon btn-outline-primary" title="View"><i class="bx bx-show"></i></a>
+                            @endcanany
+                            @can('delete driver salary slips')
                             <form method="POST" action="{{ route('admin.driver-management.salary-slip.destroy', $slip) }}" class="d-inline" onsubmit="return confirm('Delete this salary slip?')">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-icon btn-outline-danger" title="Delete"><i class="bx bx-trash"></i></button>
                             </form>
+                            @endcan
                         </td>
                     </tr>
                     @empty

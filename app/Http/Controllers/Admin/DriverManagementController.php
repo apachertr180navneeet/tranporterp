@@ -230,6 +230,11 @@ class DriverManagementController extends Controller
                 $slip->monthName = $startOfMonth->format('F');
                 $slip->advances = collect($existing->advances_data ?? []);
             } else {
+                if (!auth()->user()->can('generate driver salary slips') && !auth()->user()->isSuperAdmin()) {
+                    return redirect()->route('admin.driver-management.salary-slip.list')
+                        ->with('error', 'Salary slip has not been generated for this month yet. You do not have permission to generate new salary slips.');
+                }
+
                 $salary = DriverSalary::where('driver_id', $driverId)
                     ->orderByDesc('effective_from')
                     ->first();

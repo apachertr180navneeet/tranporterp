@@ -215,8 +215,8 @@ document.addEventListener('DOMContentLoaded', function() {
         fill: { opacity: [0.85, 0.85, 1], gradient: { inverseColors: false, shade: 'light', type: 'vertical', opacityFrom: 0.85, opacityTo: 0.55 } },
         labels: chartMonths,
         markers: { size: 0 },
-        yaxis: { labels: { formatter: v => '₹ ' + v.toLocaleString() } },
-        tooltip: { shared: true, intersect: false, y: { formatter: v => '₹ ' + Number(v).toLocaleString() } },
+        yaxis: { labels: { formatter: v => '₹ ' + Math.round(v).toLocaleString('en-IN') } },
+        tooltip: { shared: true, intersect: false, y: { formatter: v => '₹ ' + Math.round(v).toLocaleString('en-IN') } },
         legend: { position: 'top', horizontalAlign: 'center' }
     };
 

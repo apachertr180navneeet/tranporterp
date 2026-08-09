@@ -201,12 +201,12 @@ document.addEventListener('DOMContentLoaded', function() {
         labels: pnlData.months,
         markers: { size: 0 },
         yaxis: {
-            labels: { formatter: v => '₹ ' + v.toLocaleString() }
+            labels: { formatter: v => '₹ ' + Math.round(v).toLocaleString('en-IN') }
         },
         tooltip: {
             shared: true,
             intersect: false,
-            y: { formatter: v => '₹ ' + Number(v).toLocaleString() }
+            y: { formatter: v => '₹ ' + Math.round(v).toLocaleString('en-IN') }
         },
         legend: { position: 'top', horizontalAlign: 'center' }
     };

@@ -208,38 +208,70 @@ class SuperAdminController extends Controller
             array_merge($bultyParams, [$twelveMonthsAgo])
         );
 
-        $monthlyDetails = DB::select(
-            "SELECT YEAR(b.lr_date) as y, MONTH(b.lr_date) as m,
-                    COALESCE(SUM(tfd.amount),0) as fuel,
-                    COALESCE(SUM(tft.amount),0) as fasttag,
-                    COALESCE(SUM(tad.amount),0) as adblue,
-                    COALESCE(SUM(toad.amount),0) as other,
-                    COALESCE(SUM(tad2.advance_amount),0) as adv_amount
+        $monthlyFuel = DB::select(
+            "SELECT YEAR(b.lr_date) as y, MONTH(b.lr_date) as m, COALESCE(SUM(tfd.amount),0) as amt
              FROM bulties b
-             LEFT JOIN trips t ON t.builty_id = b.id
-             LEFT JOIN trip_fuel_details tfd ON tfd.trip_id = t.id
-             LEFT JOIN trip_fast_tag_details tft ON tft.trip_id = t.id
-             LEFT JOIN trip_adblue_details tad ON tad.trip_id = t.id
-             LEFT JOIN trip_other_amount_details toad ON toad.trip_id = t.id
-             LEFT JOIN trip_advance_details tad2 ON tad2.trip_id = t.id
+             JOIN trips t ON t.builty_id = b.id
+             JOIN trip_fuel_details tfd ON tfd.trip_id = t.id
              WHERE b.$bultyWhere AND b.lr_date >= ?
-             GROUP BY YEAR(b.lr_date), MONTH(b.lr_date)
-             ORDER BY y, m",
+             GROUP BY YEAR(b.lr_date), MONTH(b.lr_date)",
+            array_merge($bultyParams, [$twelveMonthsAgo])
+        );
+
+        $monthlyFasttag = DB::select(
+            "SELECT YEAR(b.lr_date) as y, MONTH(b.lr_date) as m, COALESCE(SUM(tft.amount),0) as amt
+             FROM bulties b
+             JOIN trips t ON t.builty_id = b.id
+             JOIN trip_fast_tag_details tft ON tft.trip_id = t.id
+             WHERE b.$bultyWhere AND b.lr_date >= ?
+             GROUP BY YEAR(b.lr_date), MONTH(b.lr_date)",
+            array_merge($bultyParams, [$twelveMonthsAgo])
+        );
+
+        $monthlyAdblue = DB::select(
+            "SELECT YEAR(b.lr_date) as y, MONTH(b.lr_date) as m, COALESCE(SUM(tad.amount),0) as amt
+             FROM bulties b
+             JOIN trips t ON t.builty_id = b.id
+             JOIN trip_adblue_details tad ON tad.trip_id = t.id
+             WHERE b.$bultyWhere AND b.lr_date >= ?
+             GROUP BY YEAR(b.lr_date), MONTH(b.lr_date)",
+            array_merge($bultyParams, [$twelveMonthsAgo])
+        );
+
+        $monthlyOther = DB::select(
+            "SELECT YEAR(b.lr_date) as y, MONTH(b.lr_date) as m, COALESCE(SUM(toad.amount),0) as amt
+             FROM bulties b
+             JOIN trips t ON t.builty_id = b.id
+             JOIN trip_other_amount_details toad ON toad.trip_id = t.id
+             WHERE b.$bultyWhere AND b.lr_date >= ?
+             GROUP BY YEAR(b.lr_date), MONTH(b.lr_date)",
+            array_merge($bultyParams, [$twelveMonthsAgo])
+        );
+
+        $monthlyAdv = DB::select(
+            "SELECT YEAR(b.lr_date) as y, MONTH(b.lr_date) as m, COALESCE(SUM(tad2.advance_amount),0) as amt
+             FROM bulties b
+             JOIN trips t ON t.builty_id = b.id
+             JOIN trip_advance_details tad2 ON tad2.trip_id = t.id
+             WHERE b.$bultyWhere AND b.lr_date >= ?
+             GROUP BY YEAR(b.lr_date), MONTH(b.lr_date)",
             array_merge($bultyParams, [$twelveMonthsAgo])
         );
 
         $monthlyBultyMap = [];
-        foreach ($monthlyBulties as $r) {
-            $monthlyBultyMap[$r->y . '-' . $r->m] = $r;
-        }
+        foreach ($monthlyBulties as $r) { $monthlyBultyMap[$r->y . '-' . $r->m] = $r; }
         $monthlyTripMap = [];
-        foreach ($monthlyTrips as $r) {
-            $monthlyTripMap[$r->y . '-' . $r->m] = $r;
-        }
-        $monthlyDetailMap = [];
-        foreach ($monthlyDetails as $r) {
-            $monthlyDetailMap[$r->y . '-' . $r->m] = $r;
-        }
+        foreach ($monthlyTrips as $r) { $monthlyTripMap[$r->y . '-' . $r->m] = $r; }
+        $monthlyFuelMap = [];
+        foreach ($monthlyFuel as $r) { $monthlyFuelMap[$r->y . '-' . $r->m] = (float)$r->amt; }
+        $monthlyFasttagMap = [];
+        foreach ($monthlyFasttag as $r) { $monthlyFasttagMap[$r->y . '-' . $r->m] = (float)$r->amt; }
+        $monthlyAdblueMap = [];
+        foreach ($monthlyAdblue as $r) { $monthlyAdblueMap[$r->y . '-' . $r->m] = (float)$r->amt; }
+        $monthlyOtherMap = [];
+        foreach ($monthlyOther as $r) { $monthlyOtherMap[$r->y . '-' . $r->m] = (float)$r->amt; }
+        $monthlyAdvMap = [];
+        foreach ($monthlyAdv as $r) { $monthlyAdvMap[$r->y . '-' . $r->m] = (float)$r->amt; }
 
         for ($i = 11; $i >= 0; $i--) {
             $date = Carbon::now()->subMonths($i);
@@ -248,16 +280,15 @@ class SuperAdminController extends Controller
 
             $mb = $monthlyBultyMap[$key] ?? null;
             $mt = $monthlyTripMap[$key] ?? null;
-            $md = $monthlyDetailMap[$key] ?? null;
 
             $income = (float)($mb->income ?? 0);
             $commission = (float)($mb->commission ?? 0);
 
-            $fuel = max((float)($md->fuel ?? 0), (float)($mt->trip_fuel ?? 0));
-            $fasttag = max((float)($md->fasttag ?? 0), (float)($mt->trip_fasttag ?? 0));
-            $adblue = max((float)($md->adblue ?? 0), (float)($mt->trip_adblue ?? 0));
-            $other = max((float)($md->other ?? 0), (float)($mt->trip_other ?? 0));
-            $advance = max((float)($md->adv_amount ?? 0), (float)($mt->trip_advance ?? 0));
+            $fuel = max($monthlyFuelMap[$key] ?? 0, (float)($mt->trip_fuel ?? 0));
+            $fasttag = max($monthlyFasttagMap[$key] ?? 0, (float)($mt->trip_fasttag ?? 0));
+            $adblue = max($monthlyAdblueMap[$key] ?? 0, (float)($mt->trip_adblue ?? 0));
+            $other = max($monthlyOtherMap[$key] ?? 0, (float)($mt->trip_other ?? 0));
+            $advance = max($monthlyAdvMap[$key] ?? 0, (float)($mt->trip_advance ?? 0));
 
             $tripExpenses = $fuel + $fasttag + $adblue + $other + $advance;
 

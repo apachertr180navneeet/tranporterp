@@ -22,10 +22,130 @@
         <link rel="stylesheet" href="{{asset('assets/admin/vendor/libs/apex-charts/apex-charts.css')}}" />
         <script src="{{asset('assets/admin/vendor/js/helpers.js')}}"></script>
         <script src="{{asset('assets/admin/js/config.js')}}"></script>
+        <link rel="stylesheet" href="{{asset('assets/admin/css/sweet-alert.css')}}" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+        <style>
+            /* Sneat Admin Select2 Custom Styling */
+            .select2-container--default .select2-selection--single {
+                height: 38px;
+                border: 1px solid #d9dee3;
+                border-radius: 0.375rem;
+                background-color: #fff;
+            }
+            .select2-container--default .select2-selection--single .select2-selection__rendered {
+                line-height: 36px;
+                color: #697a8d;
+                padding-left: 0.875rem;
+                padding-right: 2rem;
+            }
+            .select2-container--default .select2-selection--single .select2-selection__arrow {
+                height: 36px;
+                right: 6px;
+            }
+            .select2-dropdown {
+                border: 1px solid #d9dee3;
+                border-radius: 0.375rem;
+                box-shadow: 0 0.25rem 1rem rgba(161, 172, 184, 0.45);
+                z-index: 9999;
+            }
+            .select2-search__field {
+                border: 1px solid #d9dee3 !important;
+                border-radius: 0.375rem !important;
+                padding: 0.375rem 0.75rem !important;
+                margin: 8px !important;
+                width: calc(100% - 16px) !important;
+                outline: none !important;
+            }
+            .select2-results__option {
+                padding: 8px 14px;
+                font-size: 0.9rem;
+            }
+            .select2-results__option--highlighted[aria-selected] {
+                background-color: rgba(105, 108, 255, 0.08) !important;
+                color: #696cff !important;
+            }
+            .select2-container--default .select2-selection--multiple {
+                border: 1px solid #d9dee3;
+                border-radius: 0.375rem;
+                min-height: 38px;
+            }
+            .is-invalid + .select2-container .select2-selection--single {
+                border-color: #ff3e1d !important;
+            }
+        </style>
+        @yield('style')
+        
+    </head>
+    <body>
+       <div class="layout-wrapper layout-content-navbar">
+            <div class="layout-container">
+                @include('admin.layouts.elements.left_sidebar')
+                <div class="layout-page">
+                    @include('admin.layouts.elements.header')
+                    <div class="content-wrapper">
+                        @yield('content')
+                        @include('admin.layouts.elements.footer')
+                        <div class="content-backdrop fade"></div>
+                    </div>
+                    @include('admin.layouts.elements.right_sidebar')
+                </div>
+        
+                <script src="{{asset('assets/admin/vendor/libs/jquery/jquery.js')}}"></script>
+                <script src="{{asset('assets/admin/vendor/libs/popper/popper.js')}}"></script>
+                <script src="{{asset('assets/admin/vendor/js/bootstrap.js')}}"></script>
+                <script src="{{asset('assets/admin/vendor/libs/perfect-scrollbar/perfect-scrollbar.js')}}"></script>
+                <script src="{{asset('assets/admin/vendor/js/menu.js')}}"></script>
+                <script src="{{asset('assets/admin/vendor/libs/apex-charts/apexcharts.js')}}"></script>
+                <script src="{{asset('assets/admin/js/main.js')}}"></script>
+                <script src="{{asset('assets/admin/js/dataTable.js')}}"></script>
                 <script src="{{asset('assets/admin/js/bootstrapDataTable.js')}}"></script>
                 <script src="{{asset('assets/admin/js/dashboards-analytics.js')}}"></script>
                 <script src="{{asset('assets/admin/js/moment.min.js')}}"></script>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
                 <script async defer src="https://buttons.github.io/buttons.js"></script>
+                <script>
+                    $(document).ready(function() {
+                        function initGlobalSelect2(context) {
+                            if (typeof $.fn.select2 === 'undefined') return;
+                            var $target = context ? $(context).find('.select2, select.select2-search') : $('.select2, select.select2-search');
+                            $target.each(function() {
+                                var $this = $(this);
+                                if ($this.data('select2')) return;
+                                var firstEmpty = $this.find('option[value=""]');
+                                var placeholderText = $this.attr('placeholder') || (firstEmpty.length ? firstEmpty.text() : ($this.find('option:first-child').text() || 'Select an option'));
+                                var allowClear = !$this.prop('required');
+                                var $modal = $this.closest('.modal');
+                                var selectConfig = {
+                                    placeholder: {
+                                        id: '',
+                                        text: placeholderText
+                                    },
+                                    allowClear: allowClear,
+                                    width: '100%'
+                                };
+                                if ($modal.length) {
+                                    selectConfig.dropdownParent = $modal;
+                                }
+                                $this.select2(selectConfig);
+                            });
+                        }
+                        window.initGlobalSelect2 = initGlobalSelect2;
+                        initGlobalSelect2();
+
+                        $(document).on('shown.bs.modal', '.modal', function() {
+                            initGlobalSelect2(this);
+                        });
+
+                        $(document).on('submit', 'form', function() {
+                            $(this).find('.select2').each(function() {
+                                var val = $(this).val();
+                                if (val !== null && val !== undefined) {
+                                    $(this).val(val);
+                                }
+                            });
+                        });
+                    });
+                </script>
                 @yield('script')
                 @include('admin.layouts.elements.sweet_alerts')
             </div>

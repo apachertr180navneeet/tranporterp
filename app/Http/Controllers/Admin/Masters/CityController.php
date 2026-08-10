@@ -19,7 +19,34 @@ class CityController extends Controller
                 abort(403);
             }
             return $next($request);
-        })->except(['quickStore']);
+        })->except(['quickStore', 'search']);
+    }
+
+    public function search(Request $request)
+    {
+        $term = trim($request->input('q') ?? $request->input('term') ?? '');
+
+        $query = City::where('status', 'active');
+
+        if ($term !== '') {
+            $query->where(function ($q) use ($term) {
+                $q->where('name', 'like', "%{$term}%")
+                  ->orWhere('state', 'like', "%{$term}%");
+            });
+        }
+
+        $cities = $query->orderBy('name')->limit(50)->get();
+
+        $results = $cities->map(function ($city) {
+            return [
+                'id' => $city->id,
+                'text' => $city->name . ' (' . $city->state . ')',
+            ];
+        });
+
+        return response()->json([
+            'results' => $results
+        ]);
     }
 
     public function index(Request $request)

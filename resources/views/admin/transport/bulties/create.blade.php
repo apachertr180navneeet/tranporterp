@@ -110,7 +110,7 @@
                                         <i class="bx bx-plus-circle me-1"></i> Add New
                                     </button>
                                 </div>
-                                <select name="from_city" class="form-select @error('from_city') is-invalid @enderror" required>
+                                <select name="from_city" class="form-select select2-ajax-city @error('from_city') is-invalid @enderror" data-placeholder="Select Origin" required>
                                     <option value="">Select Origin</option>
                                     @foreach($cities as $city)
                                         <option value="{{ $city->id }}" {{ old('from_city') == $city->id ? 'selected' : '' }}>{{ $city->name }} ({{ $city->state }})</option>
@@ -134,7 +134,7 @@
                                         <i class="bx bx-plus-circle me-1"></i> Add New
                                     </button>
                                 </div>
-                                <select name="to_city" class="form-select @error('to_city') is-invalid @enderror" required>
+                                <select name="to_city" class="form-select select2-ajax-city @error('to_city') is-invalid @enderror" data-placeholder="Select Destination" required>
                                     <option value="">Select Destination</option>
                                     @foreach($cities as $city)
                                         <option value="{{ $city->id }}" {{ old('to_city') == $city->id ? 'selected' : '' }}>{{ $city->name }} ({{ $city->state }})</option>
@@ -1747,6 +1747,46 @@
             $('#missingLRModal').modal('hide');
         });
 
+        // Select2 AJAX City Search Initialization
+        function initCityAjaxSelect2() {
+            $('.select2-ajax-city').each(function() {
+                var $el = $(this);
+                if ($el.data('select2')) return;
+                var placeholderText = $el.data('placeholder') || ($el.find('option[value=""]').text() || 'Select City');
+                $el.select2({
+                    placeholder: {
+                        id: '',
+                        text: placeholderText
+                    },
+                    allowClear: !$el.prop('required'),
+                    width: '100%',
+                    ajax: {
+                        url: '{{ route("admin.masters.city.search") }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                q: params.term || ''
+                            };
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: data.results
+                            };
+                        },
+                        cache: true
+                    },
+                    minimumInputLength: 0
+                });
+            });
+        }
+        initCityAjaxSelect2();
+
+        let targetCitySelect = null;
+        $(document).on('click', '[data-bs-target="#addCityModal"]', function() {
+            targetCitySelect = $(this).closest('.col-md-5').find('select');
+        });
+
         // Quick Add City
         $('#quickAddCityForm').on('submit', function(e) {
             e.preventDefault();
@@ -1762,8 +1802,19 @@
                 type: 'POST',
                 data: $(this).serialize() + '&' + $.param(cbData),
                 success: function(res) {
-                    var newOption = new Option(res.name + ' (' + res.state + ')', res.id, true, true);
-                    $('select[name="from_city"], select[name="to_city"]').append(newOption).trigger('change');
+                    var optionText = res.name + ' (' + res.state + ')';
+                    var newOptionFrom = new Option(optionText, res.id, false, false);
+                    var newOptionTo = new Option(optionText, res.id, false, false);
+                    
+                    $('select[name="from_city"]').append(newOptionFrom);
+                    $('select[name="to_city"]').append(newOptionTo);
+
+                    if (targetCitySelect && targetCitySelect.length) {
+                        targetCitySelect.val(res.id).trigger('change');
+                    } else {
+                        $('select[name="from_city"]').val(res.id).trigger('change');
+                    }
+                    
                     $('#addCityModal').modal('hide');
                     $('#quickAddCityForm')[0].reset();
                     Swal.fire({ icon: 'success', title: 'Success!', text: 'City added and selected successfully.', toast: true, position: 'top-end', showConfirmButton: false, timer: 3000 });

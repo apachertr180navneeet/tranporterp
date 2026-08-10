@@ -377,6 +377,7 @@ Route::name('admin.')->prefix('admin')->group(function () {
             Route::put('city/{city}/restore', [CityController::class, 'restore'])->name('city.restore');
             Route::delete('city/{city}/force-delete', [CityController::class, 'forceDelete'])->name('city.force-delete');
             Route::post('city/{city}/toggle-status', [CityController::class, 'toggleStatus'])->name('city.toggle-status');
+            Route::get('city/search', [CityController::class, 'search'])->name('city.search');
             Route::resource('city', CityController::class);
             Route::post('city/quick-store', [CityController::class, 'quickStore'])->name('city.quick-store');
             Route::post('gst/quick-store', [GstMasterController::class, 'quickStore'])->name('gst.quick-store');

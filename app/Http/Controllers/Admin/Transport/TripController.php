@@ -43,7 +43,7 @@ class TripController extends Controller
             ->whereNotNull('material_document');
 
         if ($request->filled('search')) {
-            $search = $request->search;
+            $search = trim($request->search);
             $query->where(function ($q) use ($search) {
                 $q->where('lr_no', 'like', "%{$search}%")
                     ->orWhereHas('consignor', function ($q) use ($search) {
@@ -53,7 +53,40 @@ class TripController extends Controller
                     ->orWhereHas('consignee', function ($q) use ($search) {
                         $q->where('name', 'like', "%{$search}%")
                             ->orWhere('phone', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('originCity', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('destinationCity', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('vehicle', function ($q) use ($search) {
+                        $q->where('vehicle_number', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('driver', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%")
+                            ->orWhere('phone', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('trip', function ($q) use ($search) {
+                        $q->where('trip_no', 'like', "%{$search}%");
                     });
+
+                if (stripos('pending', $search) !== false) {
+                    $q->orWhereDoesntHave('trip')
+                      ->orWhereHas('trip', function ($sq) {
+                          $sq->where('status', 'pending')->orWhereNull('status');
+                      });
+                }
+                if (stripos('complete', $search) !== false) {
+                    $q->orWhereHas('trip', function ($sq) {
+                        $sq->where('status', 'complete');
+                    });
+                }
+                if (stripos('reject', $search) !== false) {
+                    $q->orWhereHas('trip', function ($sq) {
+                        $sq->where('status', 'reject');
+                    });
+                }
             });
         }
 
@@ -95,7 +128,7 @@ class TripController extends Controller
             'reject' => $rejectedCount,
         ];
 
-        $trips = $query->orderBy('created_at', 'desc')->paginate(15);
+        $trips = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
 
         return view('admin.transport.trips.index', compact('trips', 'statusCounts', 'totalTrips'));
     }

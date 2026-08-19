@@ -37,6 +37,8 @@ class TripController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
+        $baseQuery = Bulty::whereNotNull('material_document');
+
         $query = Bulty::with(['consignor', 'consignee', 'originCity', 'destinationCity', 'bultyItems', 'trip'])
             ->whereNotNull('material_document');
 
@@ -55,9 +57,47 @@ class TripController extends Controller
             });
         }
 
+        if ($request->filled('status')) {
+            $status = $request->status;
+            if ($status === 'complete') {
+                $query->whereHas('trip', function ($q) {
+                    $q->where('status', 'complete');
+                });
+            } elseif ($status === 'reject') {
+                $query->whereHas('trip', function ($q) {
+                    $q->where('status', 'reject');
+                });
+            } elseif ($status === 'pending') {
+                $query->where(function ($q) {
+                    $q->whereDoesntHave('trip')->orWhereHas('trip', function ($sq) {
+                        $sq->where('status', 'pending')->orWhereNull('status');
+                    });
+                });
+            }
+        }
+
+        $totalTrips = (clone $baseQuery)->count();
+        $completedCount = (clone $baseQuery)->whereHas('trip', function ($q) {
+            $q->where('status', 'complete');
+        })->count();
+        $rejectedCount = (clone $baseQuery)->whereHas('trip', function ($q) {
+            $q->where('status', 'reject');
+        })->count();
+        $pendingCount = (clone $baseQuery)->where(function ($q) {
+            $q->whereDoesntHave('trip')->orWhereHas('trip', function ($sq) {
+                $sq->where('status', 'pending')->orWhereNull('status');
+            });
+        })->count();
+
+        $statusCounts = [
+            'pending' => $pendingCount,
+            'complete' => $completedCount,
+            'reject' => $rejectedCount,
+        ];
+
         $trips = $query->orderBy('created_at', 'desc')->paginate(15);
 
-        return view('admin.transport.trips.index', compact('trips'));
+        return view('admin.transport.trips.index', compact('trips', 'statusCounts', 'totalTrips'));
     }
 
     public function create($builtyId)

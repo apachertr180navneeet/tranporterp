@@ -14,16 +14,70 @@
         </div>
     </div>
 
+    <!-- Status Cards -->
+    @php
+        $activeStatus = request('status');
+        $statusCards = [
+            'pending' => ['label' => 'Pending', 'icon' => 'bx bx-time', 'bg' => 'bg-warning'],
+            'complete' => ['label' => 'Complete', 'icon' => 'bx bx-check-circle', 'bg' => 'bg-success'],
+            'reject' => ['label' => 'Reject', 'icon' => 'bx bx-x-circle', 'bg' => 'bg-danger'],
+        ];
+    @endphp
+    <div class="row g-2 mb-4">
+        <div class="col-md-3 col-6">
+            <a href="{{ route('admin.transport.trips.index', request()->except('status', 'page')) }}" class="text-decoration-none">
+                <div class="card shadow-sm border-0 h-100 {{ !$activeStatus ? 'border-primary' : '' }}">
+                    <div class="card-body d-flex align-items-center gap-2 py-2 px-3">
+                        <div class="flex-shrink-0 rounded-3 p-2 bg-dark">
+                            <i class="bx bx-list-ul text-white"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold">{{ $totalTrips ?? 0 }}</div>
+                            <div class="small text-muted">All</div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        @foreach($statusCards as $status => $card)
+            @php $count = $statusCounts[$status] ?? 0; $isActive = $activeStatus === $status; @endphp
+            <div class="col-md-3 col-6">
+                <a href="{{ route('admin.transport.trips.index', array_merge(request()->except('status', 'page'), ['status' => $status])) }}" class="text-decoration-none">
+                    <div class="card shadow-sm border-0 h-100 {{ $isActive ? 'border-primary' : '' }}">
+                        <div class="card-body d-flex align-items-center gap-2 py-2 px-3">
+                            <div class="flex-shrink-0 rounded-3 p-2 {{ $card['bg'] }}">
+                                <i class="{{ $card['icon'] }} text-white"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold">{{ $count }}</div>
+                                <div class="small text-muted">{{ $card['label'] }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        @endforeach
+    </div>
+
+    <!-- Filters -->
     <div class="card mb-4">
         <div class="card-body">
             <form method="GET" action="{{ route('admin.transport.trips.index') }}" class="row g-3">
                 <div class="col-md-5">
                     <input type="text" name="search" class="form-control" placeholder="Search LR No, Consignor or Consignee..." value="{{ request('search') }}">
                 </div>
+                <div class="col-md-3">
+                    <select name="status" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="complete" {{ request('status') == 'complete' ? 'selected' : '' }}>Complete</option>
+                        <option value="reject" {{ request('status') == 'reject' ? 'selected' : '' }}>Reject</option>
+                    </select>
+                </div>
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-primary w-100">Filter</button>
                 </div>
-                @if(request()->filled('search'))
+                @if(request()->filled('search') || request()->filled('status'))
                 <div class="col-md-2">
                     <a href="{{ route('admin.transport.trips.index') }}" class="btn btn-outline-secondary w-100">Clear</a>
                 </div>

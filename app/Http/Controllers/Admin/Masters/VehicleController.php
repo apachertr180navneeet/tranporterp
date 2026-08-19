@@ -249,7 +249,31 @@ class VehicleController extends Controller
             return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
         }
 
-        $vehicle = Vehicle::where('vehicle_number', $request->vehicle_number)->first();
+        $vehicleNum = trim($request->vehicle_number ?? '');
+        if (empty($vehicleNum)) {
+            return response()->json(['success' => false, 'message' => 'Vehicle number is required']);
+        }
+
+        $cleanNumber = preg_replace('/[^A-Za-z0-9]/', '', $vehicleNum);
+
+        // 1. Exact match
+        $vehicle = Vehicle::where('vehicle_number', $vehicleNum)->first();
+
+        // 2. Normalized match (spaces, hyphens, dots stripped)
+        if (!$vehicle && !empty($cleanNumber)) {
+            $vehicle = Vehicle::whereRaw("REPLACE(REPLACE(REPLACE(vehicle_number, ' ', ''), '-', ''), '.', '') = ?", [$cleanNumber])->first();
+        }
+
+        // 3. Suffix / ends-with match (e.g., searching 4 digits like '2334' for 'MH 12 AB 2334')
+        if (!$vehicle && !empty($vehicleNum)) {
+            $vehicle = Vehicle::where('vehicle_number', 'like', "%{$vehicleNum}")->first();
+        }
+
+        // 4. Substring / partial match on normalized vehicle number
+        if (!$vehicle && !empty($cleanNumber)) {
+            $vehicle = Vehicle::whereRaw("REPLACE(REPLACE(REPLACE(vehicle_number, ' ', ''), '-', ''), '.', '') LIKE ?", ["%{$cleanNumber}%"])->first();
+        }
+
         if ($vehicle) {
             $inUse = Bulty::where('vehicle_id', $vehicle->id)
                 ->whereHas('trip', fn($q) => $q->where('status', 'pending'))
@@ -260,7 +284,7 @@ class VehicleController extends Controller
                 'in_use' => $inUse,
             ]);
         }
-        return response()->json(['success' => false]);
+        return response()->json(['success' => false, 'message' => 'Vehicle not found']);
     }
 
     public function search(Request $request)
@@ -269,17 +293,22 @@ class VehicleController extends Controller
             return response()->json([], 403);
         }
 
-        $term = $request->term;
+        $term = trim($request->term ?? '');
+        $cleanTerm = preg_replace('/[^A-Za-z0-9]/', '', $term);
+
         $excludeIds = Bulty::whereHas('trip', fn($q) => $q->where('status', 'pending'))
             ->pluck('vehicle_id')
             ->filter()
             ->unique();
 
         $vehicles = Vehicle::whereNotIn('id', $excludeIds)
-            ->where(function ($q) use ($term) {
+            ->where(function ($q) use ($term, $cleanTerm) {
                 $q->where('vehicle_number', 'like', "%{$term}%")
                   ->orWhere('owner_name', 'like', "%{$term}%")
                   ->orWhere('vehicle_type', 'like', "%{$term}%");
+                if (!empty($cleanTerm)) {
+                    $q->orWhereRaw("REPLACE(REPLACE(REPLACE(vehicle_number, ' ', ''), '-', ''), '.', '') LIKE ?", ["%{$cleanTerm}%"]);
+                }
             })
             ->limit(10)
             ->get();

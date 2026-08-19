@@ -223,17 +223,34 @@ class DriverController extends Controller
             return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
         }
 
-        $driver = Driver::where('name', $request->driver_name)
-            ->orWhere('phone', $request->driver_name)
-            ->orWhere('driver_id', $request->driver_name)
+        $term = trim($request->driver_name ?? '');
+        if (empty($term)) {
+            return response()->json(['success' => false, 'message' => 'Driver identifier is required']);
+        }
+
+        $cleanTerm = preg_replace('/[^A-Za-z0-9]/', '', $term);
+
+        // 1. Exact match
+        $driver = Driver::where('name', $term)
+            ->orWhere('phone', $term)
+            ->orWhere('driver_id', $term)
             ->first();
+
+        // 2. Normalized phone or partial match
+        if (!$driver && !empty($cleanTerm)) {
+            $driver = Driver::whereRaw("REPLACE(REPLACE(REPLACE(phone, ' ', ''), '-', ''), '+', '') LIKE ?", ["%{$cleanTerm}%"])
+                ->orWhere('name', 'like', "%{$term}%")
+                ->orWhere('driver_id', 'like', "%{$term}%")
+                ->first();
+        }
+
         if ($driver) {
             return response()->json([
                 'success' => true,
                 'driver' => $driver
             ]);
         }
-        return response()->json(['success' => false]);
+        return response()->json(['success' => false, 'message' => 'Driver not found']);
     }
 
     public function search(Request $request)
@@ -242,13 +259,20 @@ class DriverController extends Controller
             return response()->json([], 403);
         }
 
-        $term = $request->term;
-        $drivers = Driver::where('name', 'like', "%{$term}%")
-            ->orWhere('phone', 'like', "%{$term}%")
-            ->orWhere('license_number', 'like', "%{$term}%")
-            ->orWhere('driver_id', 'like', "%{$term}%")
-            ->limit(10)
-            ->get();
+        $term = trim($request->term ?? '');
+        $cleanTerm = preg_replace('/[^A-Za-z0-9]/', '', $term);
+
+        $drivers = Driver::where(function ($q) use ($term, $cleanTerm) {
+            $q->where('name', 'like', "%{$term}%")
+              ->orWhere('phone', 'like', "%{$term}%")
+              ->orWhere('license_number', 'like', "%{$term}%")
+              ->orWhere('driver_id', 'like', "%{$term}%");
+            if (!empty($cleanTerm)) {
+                $q->orWhereRaw("REPLACE(REPLACE(REPLACE(phone, ' ', ''), '-', ''), '+', '') LIKE ?", ["%{$cleanTerm}%"]);
+            }
+        })
+        ->limit(10)
+        ->get();
 
         return response()->json($drivers);
     }

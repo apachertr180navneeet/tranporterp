@@ -66,9 +66,6 @@ class TripController extends Controller
                     ->orWhereHas('driver', function ($q) use ($search) {
                         $q->where('name', 'like', "%{$search}%")
                             ->orWhere('phone', 'like', "%{$search}%");
-                    })
-                    ->orWhereHas('trip', function ($q) use ($search) {
-                        $q->where('trip_no', 'like', "%{$search}%");
                     });
 
                 if (stripos('pending', $search) !== false) {

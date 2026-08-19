@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\SuperAdminController;
@@ -586,4 +587,63 @@ Route::middleware(['auth', 'admin'])->group(function () {
         }
     })->name('seed.all');
 });
+
+/*
+|--------------------------------------------------------------------------
+| Cache & View Clearing Utility Routes
+|--------------------------------------------------------------------------
+*/
+Route::get('/clear-cache', function () {
+    try {
+        Artisan::call('cache:clear');
+        $output = Artisan::output();
+        return response("<pre style='background:#0f172a;color:#38bdf8;padding:25px;border-radius:10px;font-family:monospace;font-size:15px;line-height:1.6;'><b>✅ Application Cache Cleared Successfully!</b><br><br>" . e($output ?: 'Cache cleared.') . "</pre>");
+    } catch (\Throwable $e) {
+        return response("<pre style='background:#0f172a;color:#f87171;padding:25px;border-radius:10px;font-family:monospace;font-size:15px;'>❌ Error clearing cache: " . e($e->getMessage()) . "</pre>", 500);
+    }
+})->name('clear.cache');
+
+Route::get('/clear-view', function () {
+    try {
+        Artisan::call('view:clear');
+        $output = Artisan::output();
+        return response("<pre style='background:#0f172a;color:#38bdf8;padding:25px;border-radius:10px;font-family:monospace;font-size:15px;line-height:1.6;'><b>✅ View Cache Cleared Successfully!</b><br><br>" . e($output ?: 'Compiled views cleared.') . "</pre>");
+    } catch (\Throwable $e) {
+        return response("<pre style='background:#0f172a;color:#f87171;padding:25px;border-radius:10px;font-family:monospace;font-size:15px;'>❌ Error clearing views: " . e($e->getMessage()) . "</pre>", 500);
+    }
+})->name('clear.view');
+
+Route::get('/clear-config', function () {
+    try {
+        Artisan::call('config:clear');
+        $output = Artisan::output();
+        return response("<pre style='background:#0f172a;color:#38bdf8;padding:25px;border-radius:10px;font-family:monospace;font-size:15px;line-height:1.6;'><b>✅ Configuration Cache Cleared Successfully!</b><br><br>" . e($output ?: 'Configuration cache cleared.') . "</pre>");
+    } catch (\Throwable $e) {
+        return response("<pre style='background:#0f172a;color:#f87171;padding:25px;border-radius:10px;font-family:monospace;font-size:15px;'>❌ Error clearing config cache: " . e($e->getMessage()) . "</pre>", 500);
+    }
+})->name('clear.config');
+
+Route::get('/clear-route', function () {
+    try {
+        Artisan::call('route:clear');
+        $output = Artisan::output();
+        return response("<pre style='background:#0f172a;color:#38bdf8;padding:25px;border-radius:10px;font-family:monospace;font-size:15px;line-height:1.6;'><b>✅ Route Cache Cleared Successfully!</b><br><br>" . e($output ?: 'Route cache cleared.') . "</pre>");
+    } catch (\Throwable $e) {
+        return response("<pre style='background:#0f172a;color:#f87171;padding:25px;border-radius:10px;font-family:monospace;font-size:15px;'>❌ Error clearing route cache: " . e($e->getMessage()) . "</pre>", 500);
+    }
+})->name('clear.route');
+
+Route::get('/clear-all', function () {
+    try {
+        Artisan::call('cache:clear');
+        Artisan::call('view:clear');
+        Artisan::call('config:clear');
+        Artisan::call('route:clear');
+        Artisan::call('optimize:clear');
+        return response("<pre style='background:#0f172a;color:#4ade80;padding:25px;border-radius:10px;font-family:monospace;font-size:15px;line-height:1.6;'><b>🚀 ALL Server Caches Cleared Successfully!</b><br><br>• Application Cache: Cleared<br>• View Cache: Cleared<br>• Config Cache: Cleared<br>• Route Cache: Cleared<br>• Optimized Compiled Files: Cleared</pre>");
+    } catch (\Throwable $e) {
+        return response("<pre style='background:#0f172a;color:#f87171;padding:25px;border-radius:10px;font-family:monospace;font-size:15px;'>❌ Error clearing all caches: " . e($e->getMessage()) . "</pre>", 500);
+    }
+})->name('clear.all');
+
 

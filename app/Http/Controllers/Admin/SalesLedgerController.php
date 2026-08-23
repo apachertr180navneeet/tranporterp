@@ -71,10 +71,11 @@ class SalesLedgerController extends Controller
         })->get();
         $consignors = \App\Models\Consignor::where('status', 'active')->get();
 
-        // Get bills for dropdown
-        $allBills = \App\Models\Invoice::when($companyId && $companyId !== 'all', function ($q) use ($companyId) {
-            $q->where('company_id', $companyId);
-        })->orderBy('id', 'desc')->get(['id', 'bill_number', 'invoice_no', 'consignor_name', 'company_id', 'branch_id']);
+        // Get bills for dropdown (only pending/unpaid bills where status != 'paid')
+        $allBills = \App\Models\Invoice::where('status', '!=', 'paid')
+            ->when($companyId && $companyId !== 'all', function ($q) use ($companyId) {
+                $q->where('company_id', $companyId);
+            })->orderBy('id', 'desc')->get(['id', 'bill_number', 'invoice_no', 'consignor_name', 'company_id', 'branch_id', 'status']);
 
         return view('admin.reports.sales_ledger', compact('invoices', 'companies', 'branches', 'consignors', 'allBills'));
     }
@@ -349,6 +350,10 @@ class SalesLedgerController extends Controller
         ]);
 
         $invoice = \App\Models\Invoice::findOrFail($request->invoice_id);
+
+        if ($invoice->status === 'paid') {
+            return back()->with('error', 'This bill is already marked as paid. Further payments cannot be added.');
+        }
 
         \Illuminate\Support\Facades\DB::transaction(function () use ($request, $invoice) {
             $receivingAmount = $request->input('receiving_amount', 0);

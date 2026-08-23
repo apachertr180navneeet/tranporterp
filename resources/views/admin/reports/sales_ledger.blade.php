@@ -38,6 +38,13 @@
         </div>
     @endif
 
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+
     <div class="card mb-4">
         <div class="card-header border-bottom">
             <h5 class="mb-0">Filter Records</h5>
@@ -184,9 +191,11 @@
                                             <button type="button" class="btn btn-outline-primary btn-sm btn-edit-receiving" data-id="{{ $singleRec->id }}" title="Edit Receive Amount">
                                                 <i class="bx bx-edit me-1"></i> Edit Recv
                                             </button>
+                                            @if($invoice->status !== 'paid')
                                             <button type="button" class="btn btn-outline-success btn-sm btn-add-receiving" data-invoice-id="{{ $invoice->id }}" title="Add Another Receiving">
                                                 <i class="bx bx-plus"></i>
                                             </button>
+                                            @endif
                                         </div>
                                     @else
                                         <div class="btn-group btn-group-sm">
@@ -202,15 +211,21 @@
                                                     </li>
                                                 @endforeach
                                             </ul>
+                                            @if($invoice->status !== 'paid')
                                             <button type="button" class="btn btn-outline-success btn-sm btn-add-receiving" data-invoice-id="{{ $invoice->id }}" title="Add Another Receiving">
                                                 <i class="bx bx-plus"></i>
                                             </button>
+                                            @endif
                                         </div>
                                     @endif
                                 @else
+                                    @if($invoice->status !== 'paid')
                                     <button type="button" class="btn btn-outline-success btn-sm btn-add-receiving" data-invoice-id="{{ $invoice->id }}" title="Receive Amount">
                                         <i class="bx bx-rupee me-1"></i> Receive
                                     </button>
+                                    @else
+                                    <span class="text-muted small">-</span>
+                                    @endif
                                 @endif
                             </td>
                             @endif

@@ -36,7 +36,7 @@ class VehicleController extends Controller
             $query->where('status', $request->status);
         }
 
-        $vehicles = $query->orderBy('created_at', 'desc')->paginate(15);
+        $vehicles = $query->orderBy('updated_at', 'desc')->orderBy('id', 'desc')->paginate(15)->withQueryString();
         return view('admin.masters.vehicles.index', compact('vehicles'));
     }
 

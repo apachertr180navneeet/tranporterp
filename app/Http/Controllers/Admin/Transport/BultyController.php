@@ -77,7 +77,7 @@ class BultyController extends Controller
             ->pluck('count', 'status')
             ->toArray();
 
-        $bulties = $query->orderBy('created_at', 'desc')->paginate(15);
+        $bulties = $query->orderBy('updated_at', 'desc')->orderBy('id', 'desc')->paginate(15)->withQueryString();
 
         return view('admin.transport.bulties.index', compact('bulties', 'statusCounts'));
     }
@@ -512,7 +512,7 @@ class BultyController extends Controller
         }
 
         $bulties = Bulty::onlyTrashed()->with(['branch', 'consignor', 'consignee', 'originCity', 'destinationCity', 'bultyItems'])
-            ->orderBy('deleted_at', 'desc')->paginate(15);
+            ->orderBy('deleted_at', 'desc')->orderBy('id', 'desc')->paginate(15)->withQueryString();
 
         return view('admin.transport.bulties.trashed', compact('bulties'));
     }

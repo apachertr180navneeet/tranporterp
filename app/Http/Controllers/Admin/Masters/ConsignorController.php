@@ -37,7 +37,7 @@ class ConsignorController extends Controller
             $query->where('status', $request->status);
         }
 
-        $consignors = $query->orderBy('created_at', 'desc')->paginate(15);
+        $consignors = $query->orderBy('updated_at', 'desc')->orderBy('id', 'desc')->paginate(15)->withQueryString();
         return view('admin.masters.consignors.index', compact('consignors'));
     }
 

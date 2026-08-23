@@ -127,7 +127,7 @@ class TripController extends Controller
             'reject' => $rejectedCount,
         ];
 
-        $trips = $query->orderBy('created_at', 'desc')->paginate(15)->withQueryString();
+        $trips = $query->orderBy('updated_at', 'desc')->orderBy('id', 'desc')->paginate(15)->withQueryString();
 
         return view('admin.transport.trips.index', compact('trips', 'statusCounts', 'totalTrips'));
     }

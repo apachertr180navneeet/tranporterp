@@ -37,7 +37,7 @@ class DriverController extends Controller
             $query->where('status', $request->status);
         }
 
-        $drivers = $query->orderBy('created_at', 'desc')->paginate(15);
+        $drivers = $query->orderBy('updated_at', 'desc')->orderBy('id', 'desc')->paginate(15)->withQueryString();
         return view('admin.masters.drivers.index', compact('drivers'));
     }
 

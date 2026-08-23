@@ -36,7 +36,7 @@ class ConsigneeController extends Controller
             $query->where('status', $request->status);
         }
 
-        $consignees = $query->orderBy('created_at', 'desc')->paginate(15);
+        $consignees = $query->orderBy('updated_at', 'desc')->orderBy('id', 'desc')->paginate(15)->withQueryString();
         return view('admin.masters.consignees.index', compact('consignees'));
     }
 

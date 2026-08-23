@@ -71,7 +71,7 @@ class RolePermissionSeeder extends Seeder
             ],
             'reports' => [
                 'view reports', 'export reports',
-                'view vehicle report', 'view driver trip report', 'view customer ledger', 'view sales ledger', 'view tds report',
+                'view vehicle report', 'view driver trip report', 'view customer ledger', 'view sales ledger', 'edit sales ledger', 'view tds report',
                 'view trip reports', 'view bilty advance details', 'view fuel report', 'view adblue report',
                 'view vehicle utilization', 'view mis report', 'view expense management', 'view vehicle document report',
                 'view gst tax report', 'view profit loss report'
@@ -235,7 +235,7 @@ class RolePermissionSeeder extends Seeder
             'view vehicles', 'view drivers',
             'view companies', 'view branches',
             'view documents', 'upload documents', 'download documents',
-            'view customer ledger', 'view sales ledger', 'view tds report',
+            'view customer ledger', 'view sales ledger', 'edit sales ledger', 'view tds report',
             'view trip reports', 'view bilty advance details',
             'view fuel report', 'view adblue report',
             'view fuel outstanding', 'create fuel outstanding', 'edit fuel outstanding', 'delete fuel outstanding',

@@ -17,9 +17,11 @@
             <a href="{{ route('admin.reports.sales-ledger.export-excel', request()->all()) }}" class="btn btn-success btn-sm me-1">
                 <i class="bx bx-file me-1"></i> Export Excel
             </a>
+            @if(auth()->user()->can('edit sales ledger') || auth()->user()->isSuperAdmin())
             <button type="button" class="btn btn-primary btn-sm me-1" data-bs-toggle="modal" data-bs-target="#receiveAmountModal">
                 <i class="bx bx-rupee me-1"></i> Receive Amount
             </button>
+            @endif
             <a href="{{ route('admin.reports.sales-ledger.history') }}" class="btn btn-outline-secondary btn-sm me-1">
                 <i class="bx bx-history me-1"></i> Receiving History
             </a>
@@ -187,6 +189,7 @@
     </div>
 </div>
 
+@if(auth()->user()->can('edit sales ledger') || auth()->user()->isSuperAdmin())
 <!-- Receive Amount Modal -->
 <div class="modal fade" id="receiveAmountModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -273,8 +276,10 @@
         </form>
     </div>
 </div>
+@endif
 @endsection
 
+@if(auth()->user()->can('edit sales ledger') || auth()->user()->isSuperAdmin())
 @section('script')
 <script>
     $(document).ready(function() {
@@ -368,3 +373,4 @@
     });
 </script>
 @endsection
+@endif

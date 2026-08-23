@@ -334,6 +334,10 @@ class SalesLedgerController extends Controller
 
     public function storeReceiving(Request $request)
     {
+        if (!auth()->user()->can('edit sales ledger') && !auth()->user()->isSuperAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $request->validate([
             'invoice_id' => 'required|exists:invoices,id',
             'date' => 'required|date',

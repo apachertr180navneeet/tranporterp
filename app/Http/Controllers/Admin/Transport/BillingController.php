@@ -50,7 +50,7 @@ class BillingController extends Controller
             $query->whereDate('lr_date', '<=', $request->to_date);
         }
 
-        $bulties = $query->orderBy('lr_date', 'desc')->paginate(15);
+        $bulties = $query->orderBy('lr_date', 'desc')->paginate(15)->withQueryString();
 
         $consignors = \App\Models\Consignor::where('status', 'active')->orderBy('name')->get(['id', 'name', 'phone']);
 
@@ -387,7 +387,7 @@ class BillingController extends Controller
             $query->whereDate('invoice_date', '<=', $request->to_date);
         }
 
-        $invoices = $query->orderBy('invoice_date', 'desc')->paginate(15);
+        $invoices = $query->orderBy('invoice_date', 'desc')->paginate(15)->withQueryString();
         $consignors = Consignor::where('status', 'active')->orderBy('name')->get(['id', 'name', 'phone']);
 
         return view('admin.transport.billing.invoices.index', compact('invoices', 'consignors'));
@@ -418,7 +418,7 @@ class BillingController extends Controller
             $query->whereDate('invoice_date', '<=', $request->to_date);
         }
 
-        $invoices = $query->orderBy('invoice_date', 'desc')->paginate(15);
+        $invoices = $query->orderBy('invoice_date', 'desc')->paginate(15)->withQueryString();
         $consignors = Consignor::where('status', 'active')->orderBy('name')->get(['id', 'name', 'phone']);
 
         return view('admin.transport.billing.invoices.toll-bills', compact('invoices', 'consignors'));

@@ -50,8 +50,14 @@
     </div>
 
     <!-- Selected Count Bar -->
-    <div id="selectedBar" class="alert alert-info d-none py-2 mb-3 d-flex align-items-center justify-content-between">
-        <span><strong id="selectedCount">0</strong> LR(s) selected</span>
+    <div id="selectedBar" class="alert alert-info d-none py-2 mb-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-2">
+            <i class="bx bx-check-circle fs-5"></i>
+            <span><strong id="selectedCount">0</strong> LR(s) selected across pages</span>
+            <button type="button" id="clearSelectionBtn" class="btn btn-outline-secondary btn-sm ms-2">
+                <i class="bx bx-x me-1"></i> Clear Selection
+            </button>
+        </div>
         <button id="generateBillBtn" class="btn btn-success btn-sm" disabled>
             <i class="bx bx-receipt me-1"></i> Generate Bill
         </button>
@@ -122,15 +128,32 @@
 
 @section('script')
 <script>
+    const STORAGE_KEY = 'selected_billing_lrs';
     const selectAll = document.getElementById('selectAll');
     const checkboxes = document.querySelectorAll('.bulty-checkbox');
     const selectedBar = document.getElementById('selectedBar');
     const selectedCount = document.getElementById('selectedCount');
     const generateBtn = document.getElementById('generateBillBtn');
+    const clearSelectionBtn = document.getElementById('clearSelectionBtn');
+
+    function getSelectedIds() {
+        try {
+            const raw = sessionStorage.getItem(STORAGE_KEY);
+            return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function saveSelectedIds(ids) {
+        try {
+            sessionStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+        } catch (e) {}
+    }
 
     function updateSelectedBar() {
-        const checked = document.querySelectorAll('.bulty-checkbox:checked');
-        const count = checked.length;
+        const ids = getSelectedIds();
+        const count = ids.length;
         if (count > 0) {
             selectedBar.classList.remove('d-none');
             selectedCount.textContent = count;
@@ -141,29 +164,86 @@
         }
     }
 
+    function syncUIFromStorage() {
+        const ids = getSelectedIds();
+        const idSet = new Set(ids.map(String));
+        let allPageChecked = checkboxes.length > 0;
+
+        checkboxes.forEach(cb => {
+            if (idSet.has(String(cb.value))) {
+                cb.checked = true;
+            } else {
+                cb.checked = false;
+                allPageChecked = false;
+            }
+        });
+
+        if (selectAll) {
+            selectAll.checked = allPageChecked && checkboxes.length > 0;
+        }
+
+        updateSelectedBar();
+    }
+
     selectAll?.addEventListener('change', function() {
-        checkboxes.forEach(cb => cb.checked = this.checked);
+        let ids = getSelectedIds();
+        const isChecked = this.checked;
+
+        checkboxes.forEach(cb => {
+            cb.checked = isChecked;
+            const val = String(cb.value);
+            if (isChecked) {
+                if (!ids.includes(val)) {
+                    ids.push(val);
+                }
+            } else {
+                ids = ids.filter(id => id !== val);
+            }
+        });
+
+        saveSelectedIds(ids);
         updateSelectedBar();
     });
 
     checkboxes.forEach(cb => {
         cb.addEventListener('change', function() {
-            if (!this.checked) {
-                selectAll.checked = false;
+            let ids = getSelectedIds();
+            const val = String(this.value);
+
+            if (this.checked) {
+                if (!ids.includes(val)) {
+                    ids.push(val);
+                }
             } else {
-                const allChecked = document.querySelectorAll('.bulty-checkbox:checked').length === checkboxes.length;
-                selectAll.checked = allChecked;
+                ids = ids.filter(id => id !== val);
             }
+
+            saveSelectedIds(ids);
+
+            if (selectAll) {
+                selectAll.checked = Array.from(checkboxes).every(c => c.checked) && checkboxes.length > 0;
+            }
+
             updateSelectedBar();
         });
     });
 
+    clearSelectionBtn?.addEventListener('click', function() {
+        sessionStorage.removeItem(STORAGE_KEY);
+        checkboxes.forEach(cb => cb.checked = false);
+        if (selectAll) selectAll.checked = false;
+        updateSelectedBar();
+    });
+
     generateBtn?.addEventListener('click', function() {
-        const ids = [];
-        document.querySelectorAll('.bulty-checkbox:checked').forEach(cb => ids.push(cb.value));
+        const ids = getSelectedIds();
         if (ids.length > 0) {
             window.location.href = '{{ route("admin.transport.billing.create") }}?ids=' + ids.join(',');
         }
     });
+
+    // Run on initial load
+    document.addEventListener('DOMContentLoaded', syncUIFromStorage);
+    syncUIFromStorage();
 </script>
 @endsection

@@ -2084,6 +2084,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize template selection
     $('#template-type-select').trigger('change');
+
+    $('form').on('submit', function() {
+        try {
+            sessionStorage.removeItem('selected_billing_lrs');
+        } catch (e) {}
+    });
 });
 </script>
 @endsection

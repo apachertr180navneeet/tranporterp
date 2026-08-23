@@ -29,7 +29,7 @@
         <div class="card-body">
             <form method="GET" action="{{ route('admin.transport.bulties.index') }}" class="row g-3">
                 <div class="col-md-3">
-                    <input type="text" name="search" class="form-control" placeholder="Search LR No, Consignor or Consignee..." value="{{ request('search') }}">
+                    <input type="text" name="search" class="form-control" placeholder="Search LR No, Truck No, Consignor or Consignee..." value="{{ request('search') }}">
                 </div>
 
                 <div class="col-md-2">
@@ -112,6 +112,7 @@
                     <tr>
                         <th>LR No</th>
                         <th>Date</th>
+                        <th>Truck No</th>
                         <th>Company</th>
                         <th>Branch</th>
                         <th>Consignor</th>
@@ -128,6 +129,7 @@
                     <tr>
                         <td class="fw-semibold">{{ $bulty->lr_no }}</td>
                         <td>{{ $bulty->lr_date ? date('d M Y', strtotime($bulty->lr_date)) : '-' }}</td>
+                        <td><strong>{{ $bulty->vehicle->vehicle_number ?? '-' }}</strong></td>
                         <td>{{ $bulty->company->name ?? '-' }}</td>
                         <td>{{ $bulty->branch->name ?? '-' }}</td>
                         <td>{{ $bulty->consignor->name ?? '-' }}</td>
@@ -175,7 +177,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="11" class="text-center py-4">
+                        <td colspan="12" class="text-center py-4">
                             <p class="text-muted mb-0">No Bilties Found</p>
                         </td>
                     </tr>

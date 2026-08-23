@@ -44,6 +44,9 @@ class BultyController extends Controller
                     ->orWhereHas('consignee', function ($q) use ($search) {
                         $q->where('name', 'like', "%{$search}%")
                             ->orWhere('phone', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('vehicle', function ($q) use ($search) {
+                        $q->where('vehicle_number', 'like', "%{$search}%");
                     });
             });
         }

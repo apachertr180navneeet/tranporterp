@@ -150,6 +150,9 @@ Route::name('admin.')->prefix('admin')->group(function () {
         Route::get('reports/sales-ledger/export-excel', [\App\Http\Controllers\Admin\SalesLedgerController::class, 'exportExcel'])->name('reports.sales-ledger.export-excel');
         Route::get('reports/sales-ledger/history', [\App\Http\Controllers\Admin\SalesLedgerController::class, 'history'])->name('reports.sales-ledger.history');
         Route::post('reports/sales-ledger/receive', [\App\Http\Controllers\Admin\SalesLedgerController::class, 'storeReceiving'])->name('reports.sales-ledger.receive');
+        Route::get('reports/sales-ledger/receiving/{id}', [\App\Http\Controllers\Admin\SalesLedgerController::class, 'getReceivingDetails'])->name('reports.sales-ledger.receiving-details');
+        Route::put('reports/sales-ledger/receiving/{id}', [\App\Http\Controllers\Admin\SalesLedgerController::class, 'updateReceiving'])->name('reports.sales-ledger.update-receiving');
+        Route::delete('reports/sales-ledger/receiving/{id}', [\App\Http\Controllers\Admin\SalesLedgerController::class, 'deleteReceiving'])->name('reports.sales-ledger.delete-receiving');
         Route::get('reports/sales-ledger/invoice-details/{id}', [\App\Http\Controllers\Admin\SalesLedgerController::class, 'getInvoiceDetails'])->name('reports.sales-ledger.invoice-details');
         Route::get('reports/tds-report', [\App\Http\Controllers\Admin\SalesLedgerController::class, 'tdsReport'])->name('reports.tds-report');
         Route::get('reports/bilty-advance-details', [BiltyAdvanceDetailController::class, 'index'])->name('reports.bilty-advance-details.index');

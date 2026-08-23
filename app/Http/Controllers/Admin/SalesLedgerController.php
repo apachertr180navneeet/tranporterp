@@ -18,7 +18,7 @@ class SalesLedgerController extends Controller
             ? ($request->filled('company_id') ? $request->company_id : session('current_company_id'))
             : $user->company_id;
 
-        $query = \App\Models\Invoice::with(['company', 'branch', 'consignor']);
+        $query = \App\Models\Invoice::with(['company', 'branch', 'consignor', 'billReceivings']);
 
         if ($companyId && $companyId !== 'all') {
             $query->where('company_id', $companyId);
@@ -369,20 +369,139 @@ class SalesLedgerController extends Controller
                 'deduction_reason' => $request->deduction_reason,
             ]);
 
-            // Update invoice
-            $invoice->receiving_amount += $receivingAmount;
-            $invoice->receiving_gst += $receivingGst;
-            $invoice->tds += $tds;
-            $invoice->deduction += $deduction;
+            // Synchronize and update invoice
+            $invoice->receiving_amount = $invoice->billReceivings()->sum('receiving_amount');
+            $invoice->receiving_gst = $invoice->billReceivings()->sum('receiving_gst');
+            $invoice->tds = $invoice->billReceivings()->sum('tds');
+            $invoice->deduction = $invoice->billReceivings()->sum('deduction');
             
             // Check if fully paid
             if ($invoice->outstanding_amount <= 0 && $invoice->net_payable_amount > 0) {
                 $invoice->status = 'paid';
+            } else {
+                $invoice->status = 'pending';
             }
             
             $invoice->save();
         });
 
         return back()->with('success', 'Amount received successfully.');
+    }
+
+    public function getReceivingDetails($id)
+    {
+        if (!auth()->user()->can('edit sales ledger') && !auth()->user()->can('view sales ledger') && !auth()->user()->can('view reports') && !auth()->user()->isSuperAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $receiving = \App\Models\BillReceiving::with(['invoice.company', 'invoice.branch'])->find($id);
+
+        if (!$receiving) {
+            return response()->json(['success' => false, 'message' => 'Receiving record not found']);
+        }
+
+        $invoice = $receiving->invoice;
+        $amountWithoutGst = $invoice ? ($invoice->total_freight + $invoice->total_other) : 0;
+        $grossBaseAmount = $amountWithoutGst + ($invoice ? $invoice->total_gst : 0);
+        $billNo = $invoice ? (!empty($invoice->bill_number) ? $invoice->bill_number : ($invoice->invoice_no ?? ('INV-' . $invoice->id))) : '';
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $receiving->id,
+                'invoice_id' => $receiving->invoice_id,
+                'bill_number' => $billNo,
+                'date' => $receiving->date?->format('Y-m-d'),
+                'receiving_amount' => $receiving->receiving_amount,
+                'receiving_gst' => $receiving->receiving_gst,
+                'tds' => $receiving->tds,
+                'deduction' => $receiving->deduction,
+                'deduction_reason' => $receiving->deduction_reason ?? '',
+                'bill_to' => $invoice ? $invoice->consignor_name : '',
+                'company_name' => $receiving->company ? $receiving->company->name : ($invoice?->company?->name ?? ''),
+                'branch_name' => $receiving->branch ? $receiving->branch->name : ($invoice?->branch?->name ?? ''),
+                'gross_base_amount' => $grossBaseAmount,
+                'net_payable_amount' => $invoice ? $invoice->net_payable_amount : 0,
+                'outstanding_amount' => $invoice ? $invoice->outstanding_amount : 0,
+            ]
+        ]);
+    }
+
+    public function updateReceiving(Request $request, $id)
+    {
+        if (!auth()->user()->can('edit sales ledger') && !auth()->user()->isSuperAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $request->validate([
+            'date' => 'required|date',
+            'receiving_amount' => 'nullable|numeric|min:0',
+            'receiving_gst' => 'nullable|numeric|min:0',
+            'deduction' => 'nullable|numeric|min:0',
+            'tds' => 'nullable|numeric|min:0',
+            'deduction_reason' => 'nullable|string|max:255',
+        ]);
+
+        $receiving = \App\Models\BillReceiving::findOrFail($id);
+
+        \Illuminate\Support\Facades\DB::transaction(function () use ($request, $receiving) {
+            $receiving->update([
+                'date' => $request->date,
+                'receiving_amount' => $request->input('receiving_amount', 0),
+                'receiving_gst' => $request->input('receiving_gst', 0),
+                'tds' => $request->input('tds', 0),
+                'deduction' => $request->input('deduction', 0),
+                'deduction_reason' => $request->deduction_reason,
+            ]);
+
+            $invoice = $receiving->invoice;
+            if ($invoice) {
+                $invoice->receiving_amount = $invoice->billReceivings()->sum('receiving_amount');
+                $invoice->receiving_gst = $invoice->billReceivings()->sum('receiving_gst');
+                $invoice->tds = $invoice->billReceivings()->sum('tds');
+                $invoice->deduction = $invoice->billReceivings()->sum('deduction');
+
+                if ($invoice->outstanding_amount <= 0 && $invoice->net_payable_amount > 0) {
+                    $invoice->status = 'paid';
+                } else {
+                    $invoice->status = 'pending';
+                }
+
+                $invoice->save();
+            }
+        });
+
+        return back()->with('success', 'Receiving entry updated successfully.');
+    }
+
+    public function deleteReceiving($id)
+    {
+        if (!auth()->user()->can('edit sales ledger') && !auth()->user()->isSuperAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $receiving = \App\Models\BillReceiving::findOrFail($id);
+        $invoice = $receiving->invoice;
+
+        \Illuminate\Support\Facades\DB::transaction(function () use ($receiving, $invoice) {
+            $receiving->delete();
+
+            if ($invoice) {
+                $invoice->receiving_amount = $invoice->billReceivings()->sum('receiving_amount');
+                $invoice->receiving_gst = $invoice->billReceivings()->sum('receiving_gst');
+                $invoice->tds = $invoice->billReceivings()->sum('tds');
+                $invoice->deduction = $invoice->billReceivings()->sum('deduction');
+
+                if ($invoice->outstanding_amount <= 0 && $invoice->net_payable_amount > 0) {
+                    $invoice->status = 'paid';
+                } else {
+                    $invoice->status = 'pending';
+                }
+
+                $invoice->save();
+            }
+        });
+
+        return back()->with('success', 'Receiving entry deleted successfully.');
     }
 }

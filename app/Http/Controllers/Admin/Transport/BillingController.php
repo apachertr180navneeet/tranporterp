@@ -7,6 +7,7 @@ use App\Models\Bulty;
 use App\Models\BillFormat;
 use App\Models\Invoice;
 use App\Models\Consignor;
+use App\Models\Consignee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -367,42 +368,19 @@ class BillingController extends Controller
 
     public function invoiceHistory(Request $request)
     {
-        $query = Invoice::with(['consignor', 'company', 'user'])->where('invoice_type', 'freight');
-
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where('invoice_no', 'LIKE', "%{$search}%")
-                  ->orWhere('consignor_name', 'LIKE', "%{$search}%");
-        }
-
-        if ($request->filled('consignor_id')) {
-            $query->where('consignor_id', $request->consignor_id);
-        }
-
-        if ($request->filled('from_date')) {
-            $query->whereDate('invoice_date', '>=', $request->from_date);
-        }
-
-        if ($request->filled('to_date')) {
-            $query->whereDate('invoice_date', '<=', $request->to_date);
-        }
-
-        $invoices = $query->orderBy('invoice_date', 'desc')->paginate(15)->withQueryString();
-        $consignors = Consignor::where('status', 'active')->orderBy('name')->get(['id', 'name', 'phone']);
-
-        return view('admin.transport.billing.invoices.index', compact('invoices', 'consignors'));
-    }
-
-    public function tollBills(Request $request)
-    {
-        $query = Invoice::with(['consignor', 'company', 'user'])
-            ->where('invoice_type', 'toll');
+        $query = Invoice::with(['consignor', 'company', 'user', 'freightBulties.consignee'])->where('invoice_type', 'freight');
 
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
                 $q->where('invoice_no', 'LIKE', "%{$search}%")
-                  ->orWhere('consignor_name', 'LIKE', "%{$search}%");
+                  ->orWhere('consignor_name', 'LIKE', "%{$search}%")
+                  ->orWhereHas('consignor', function ($qc) use ($search) {
+                      $qc->where('name', 'LIKE', "%{$search}%");
+                  })
+                  ->orWhereHas('freightBulties.consignee', function ($qc) use ($search) {
+                      $qc->where('name', 'LIKE', "%{$search}%");
+                  });
             });
         }
 
@@ -410,6 +388,12 @@ class BillingController extends Controller
             $query->where('consignor_id', $request->consignor_id);
         }
 
+        if ($request->filled('consignee_id')) {
+            $query->whereHas('freightBulties', function ($qb) use ($request) {
+                $qb->where('consignee_id', $request->consignee_id);
+            });
+        }
+
         if ($request->filled('from_date')) {
             $query->whereDate('invoice_date', '>=', $request->from_date);
         }
@@ -420,8 +404,53 @@ class BillingController extends Controller
 
         $invoices = $query->orderBy('invoice_date', 'desc')->paginate(15)->withQueryString();
         $consignors = Consignor::where('status', 'active')->orderBy('name')->get(['id', 'name', 'phone']);
+        $consignees = Consignee::where('status', 'active')->orderBy('name')->get(['id', 'name', 'phone']);
 
-        return view('admin.transport.billing.invoices.toll-bills', compact('invoices', 'consignors'));
+        return view('admin.transport.billing.invoices.index', compact('invoices', 'consignors', 'consignees'));
+    }
+
+    public function tollBills(Request $request)
+    {
+        $query = Invoice::with(['consignor', 'company', 'user', 'tollBulties.consignee'])
+            ->where('invoice_type', 'toll');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('invoice_no', 'LIKE', "%{$search}%")
+                  ->orWhere('consignor_name', 'LIKE', "%{$search}%")
+                  ->orWhereHas('consignor', function ($qc) use ($search) {
+                      $qc->where('name', 'LIKE', "%{$search}%");
+                  })
+                  ->orWhereHas('tollBulties.consignee', function ($qc) use ($search) {
+                      $qc->where('name', 'LIKE', "%{$search}%");
+                  });
+            });
+        }
+
+        if ($request->filled('consignor_id')) {
+            $query->where('consignor_id', $request->consignor_id);
+        }
+
+        if ($request->filled('consignee_id')) {
+            $query->whereHas('tollBulties', function ($qb) use ($request) {
+                $qb->where('consignee_id', $request->consignee_id);
+            });
+        }
+
+        if ($request->filled('from_date')) {
+            $query->whereDate('invoice_date', '>=', $request->from_date);
+        }
+
+        if ($request->filled('to_date')) {
+            $query->whereDate('invoice_date', '<=', $request->to_date);
+        }
+
+        $invoices = $query->orderBy('invoice_date', 'desc')->paginate(15)->withQueryString();
+        $consignors = Consignor::where('status', 'active')->orderBy('name')->get(['id', 'name', 'phone']);
+        $consignees = Consignee::where('status', 'active')->orderBy('name')->get(['id', 'name', 'phone']);
+
+        return view('admin.transport.billing.invoices.toll-bills', compact('invoices', 'consignors', 'consignees'));
     }
 
     public function billGenerate(Invoice $invoice)

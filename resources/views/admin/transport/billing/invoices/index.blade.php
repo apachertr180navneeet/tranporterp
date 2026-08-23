@@ -20,14 +20,24 @@
         <div class="card-body">
             <form method="GET" action="{{ route('admin.transport.invoices.index') }}" class="row g-3">
                 <div class="col-md-3">
-                    <input type="text" name="search" class="form-control" placeholder="Search Invoice No, Consignor..." value="{{ request('search') }}">
+                    <input type="text" name="search" class="form-control" placeholder="Search Invoice No, Consignor, Consignee..." value="{{ request('search') }}">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <select name="consignor_id" class="form-select">
                         <option value="">All Consignors</option>
                         @foreach($consignors as $consignor)
                             <option value="{{ $consignor->id }}" {{ request('consignor_id') == $consignor->id ? 'selected' : '' }}>
                                 {{ $consignor->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="consignee_id" class="form-select">
+                        <option value="">All Consignees</option>
+                        @foreach($consignees as $consignee)
+                            <option value="{{ $consignee->id }}" {{ request('consignee_id') == $consignee->id ? 'selected' : '' }}>
+                                {{ $consignee->name }}
                             </option>
                         @endforeach
                     </select>
@@ -41,9 +51,9 @@
                 <div class="col-md-1">
                     <button type="submit" class="btn btn-primary w-100">Filter</button>
                 </div>
-                @if(request()->filled('search') || request()->filled('consignor_id') || request()->filled('from_date') || request()->filled('to_date'))
-                <div class="col-md-1">
-                    <a href="{{ route('admin.transport.invoices.index') }}" class="btn btn-outline-secondary w-100">Clear</a>
+                @if(request()->filled('search') || request()->filled('consignor_id') || request()->filled('consignee_id') || request()->filled('from_date') || request()->filled('to_date'))
+                <div class="col-md-12 text-end">
+                    <a href="{{ route('admin.transport.invoices.index') }}" class="btn btn-sm btn-outline-secondary">Clear Filters</a>
                 </div>
                 @endif
             </form>
@@ -61,6 +71,7 @@
                             <th>Type</th>
                             <th>Date</th>
                             <th>Consignor / Party</th>
+                            <th>Consignee</th>
                             <th class="text-end">Total Freight (₹)</th>
                             <th class="text-end">Total GST (₹)</th>
                             <th class="text-end">Other (₹)</th>
@@ -82,6 +93,7 @@
                             </td>
                             <td>{{ $inv->invoice_date->format('d M Y') }}</td>
                             <td>{{ $inv->consignor_name ?? ($inv->consignor->name ?? '-') }}</td>
+                            <td>{{ $inv->consignee_names }}</td>
                             <td class="text-end">{{ number_format($inv->total_freight, 2) }}</td>
                             <td class="text-end">{{ number_format($inv->total_gst, 2) }}</td>
                             <td class="text-end">{{ number_format($inv->total_other, 2) }}</td>
@@ -142,7 +154,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="10" class="text-center py-4">No invoices generated yet.</td>
+                            <td colspan="11" class="text-center py-4">No invoices generated yet.</td>
                         </tr>
                         @endforelse
                     </tbody>

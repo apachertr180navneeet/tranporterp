@@ -20,14 +20,24 @@
         <div class="card-body">
             <form method="GET" action="{{ route('admin.transport.toll-bills.index') }}" class="row g-3">
                 <div class="col-md-3">
-                    <input type="text" name="search" class="form-control" placeholder="Search Invoice No, Consignor..." value="{{ request('search') }}">
+                    <input type="text" name="search" class="form-control" placeholder="Search Invoice No, Consignor, Consignee..." value="{{ request('search') }}">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <select name="consignor_id" class="form-select">
                         <option value="">All Consignors</option>
                         @foreach($consignors as $consignor)
                             <option value="{{ $consignor->id }}" {{ request('consignor_id') == $consignor->id ? 'selected' : '' }}>
                                 {{ $consignor->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="consignee_id" class="form-select">
+                        <option value="">All Consignees</option>
+                        @foreach($consignees as $consignee)
+                            <option value="{{ $consignee->id }}" {{ request('consignee_id') == $consignee->id ? 'selected' : '' }}>
+                                {{ $consignee->name }}
                             </option>
                         @endforeach
                     </select>
@@ -41,9 +51,9 @@
                 <div class="col-md-1">
                     <button type="submit" class="btn btn-primary w-100">Filter</button>
                 </div>
-                @if(request()->filled('search') || request()->filled('consignor_id') || request()->filled('from_date') || request()->filled('to_date'))
-                <div class="col-md-1">
-                    <a href="{{ route('admin.transport.toll-bills.index') }}" class="btn btn-outline-secondary w-100">Clear</a>
+                @if(request()->filled('search') || request()->filled('consignor_id') || request()->filled('consignee_id') || request()->filled('from_date') || request()->filled('to_date'))
+                <div class="col-md-12 text-end">
+                    <a href="{{ route('admin.transport.toll-bills.index') }}" class="btn btn-sm btn-outline-secondary">Clear Filters</a>
                 </div>
                 @endif
             </form>
@@ -60,6 +70,7 @@
                             <th>Invoice No</th>
                             <th>Date</th>
                             <th>Consignor / Party</th>
+                            <th>Consignee</th>
                             <th class="text-end">Toll Amount (₹)</th>
                             <th class="text-end">GST (₹)</th>
                             <th class="text-end">Grand Total (₹)</th>
@@ -73,6 +84,7 @@
                             <td><strong>{{ $inv->invoice_no }}</strong></td>
                             <td>{{ $inv->invoice_date->format('d M Y') }}</td>
                             <td>{{ $inv->consignor_name ?? ($inv->consignor->name ?? '-') }}</td>
+                            <td>{{ $inv->consignee_names }}</td>
                             <td class="text-end">{{ number_format($inv->total_freight, 2) }}</td>
                             <td class="text-end">{{ number_format($inv->total_gst, 2) }}</td>
                             <td class="text-end"><strong>{{ number_format($inv->total_amount, 2) }}</strong></td>
@@ -89,7 +101,7 @@
                                     </button>
                                     <ul class="dropdown-menu shadow-sm">
                                         <li>
-                                            <form action="{{ route('admin.transport.invoices.update-status', $inv->id) }}" method="POST">
+                                             <form action="{{ route('admin.transport.invoices.update-status', $inv->id) }}" method="POST">
                                                 @csrf
                                                 <input type="hidden" name="status" value="pending">
                                                 <button type="submit" class="dropdown-item"><i class="bx bx-time me-2"></i> Pending</button>
@@ -129,7 +141,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="8" class="text-center py-4">No toll bills generated yet.</td>
+                            <td colspan="9" class="text-center py-4">No toll bills generated yet.</td>
                         </tr>
                         @endforelse
                     </tbody>

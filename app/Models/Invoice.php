@@ -143,6 +143,26 @@ class Invoice extends Model
         return $this->receiving_amount + $this->receiving_gst;
     }
 
+    public function getConsigneeNamesAttribute()
+    {
+        if ($this->invoice_type === 'toll') {
+            $bulties = $this->relationLoaded('tollBulties') ? $this->tollBulties : $this->tollBulties()->with('consignee')->get();
+        } else {
+            $bulties = $this->relationLoaded('freightBulties') ? $this->freightBulties : $this->freightBulties()->with('consignee')->get();
+        }
+
+        if (!$bulties || $bulties->isEmpty()) {
+            if ($this->relationLoaded('bulties') && $this->bulties->isNotEmpty()) {
+                $bulties = $this->bulties;
+            } else {
+                return '-';
+            }
+        }
+
+        $names = $bulties->pluck('consignee.name')->filter()->unique()->values();
+        return $names->isNotEmpty() ? $names->implode(', ') : '-';
+    }
+
     public function getOutstandingAmountAttribute()
     {
         return $this->net_payable_amount - $this->total_received_amount;

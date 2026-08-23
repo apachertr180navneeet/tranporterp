@@ -39,12 +39,13 @@ class TripController extends Controller
 
         $baseQuery = Bulty::whereNotNull('material_document');
 
-        $query = Bulty::with(['consignor', 'consignee', 'originCity', 'destinationCity', 'bultyItems', 'trip'])
+        $query = Bulty::with(['consignor', 'consignee', 'originCity', 'destinationCity', 'bultyItems', 'trip', 'vehicle'])
             ->whereNotNull('material_document');
 
         if ($request->filled('search')) {
             $search = trim($request->search);
-            $query->where(function ($q) use ($search) {
+            $cleanSearch = str_replace(' ', '', $search);
+            $query->where(function ($q) use ($search, $cleanSearch) {
                 $q->where('lr_no', 'like', "%{$search}%")
                     ->orWhereHas('consignor', function ($q) use ($search) {
                         $q->where('name', 'like', "%{$search}%")
@@ -60,8 +61,9 @@ class TripController extends Controller
                     ->orWhereHas('destinationCity', function ($q) use ($search) {
                         $q->where('name', 'like', "%{$search}%");
                     })
-                    ->orWhereHas('vehicle', function ($q) use ($search) {
-                        $q->where('vehicle_number', 'like', "%{$search}%");
+                    ->orWhereHas('vehicle', function ($q) use ($search, $cleanSearch) {
+                        $q->where('vehicle_number', 'like', "%{$search}%")
+                          ->orWhereRaw("REPLACE(vehicle_number, ' ', '') LIKE ?", ["%{$cleanSearch}%"]);
                     })
                     ->orWhereHas('driver', function ($q) use ($search) {
                         $q->where('name', 'like', "%{$search}%")

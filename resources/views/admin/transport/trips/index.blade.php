@@ -64,7 +64,7 @@
         <div class="card-body">
             <form method="GET" action="{{ route('admin.transport.trips.index') }}" class="row g-3">
                 <div class="col-md-5">
-                    <input type="text" name="search" class="form-control" placeholder="Search LR No, Consignor or Consignee..." value="{{ request('search') }}">
+                    <input type="text" name="search" class="form-control" placeholder="Search LR No, Truck No, Consignor or Consignee..." value="{{ request('search') }}">
                 </div>
                 <div class="col-md-3">
                     <select name="status" class="form-select">
@@ -93,6 +93,7 @@
                     <tr>
                         <th>LR No</th>
                         <th>Date</th>
+                        <th>Truck No</th>
                         <th>Consignor</th>
                         <th>Consignee</th>
                         <th>From → To</th>
@@ -107,6 +108,7 @@
                     <tr>
                         <td class="fw-semibold">{{ $trip->lr_no }}</td>
                         <td>{{ $trip->lr_date ? date('d M Y', strtotime($trip->lr_date)) : '-' }}</td>
+                        <td><strong>{{ $trip->vehicle->vehicle_number ?? '-' }}</strong></td>
                         <td>{{ $trip->consignor->name ?? '-' }}</td>
                         <td>{{ $trip->consignee->name ?? '-' }}</td>
                         <td>{{ $trip->originCity->name ?? '-' }} <i class="bx bx-chevron-right mx-1 text-muted"></i> {{ $trip->destinationCity->name ?? '-' }}</td>
@@ -167,7 +169,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="9" class="text-center py-4">
+                        <td colspan="10" class="text-center py-4">
                             <p class="text-muted mb-0">No Trips with Material Documents Found</p>
                         </td>
                     </tr>

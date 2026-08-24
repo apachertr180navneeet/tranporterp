@@ -2,7 +2,8 @@
      data-slot-code="{{ $slotCode }}"
      ondragover="handleDragOver(event)"
      ondragleave="handleDragLeave(event)"
-     ondrop="handleDrop(event, '{{ $slotCode }}')">
+     ondrop="handleDrop(event, '{{ $slotCode }}')"
+     @if(!$tyre) onclick="handleEmptySlotClick('{{ $slotCode }}')" title="Click to add new tyre at position {{ $slotCode }}" @endif>
 
     <!-- Slot Header Position Badge -->
     <div class="w-100 d-flex justify-content-between align-items-center mb-1">
@@ -14,9 +15,11 @@
     @if($tyre)
         @include('admin.maintenance.tyre-management.partials.tyre-card', ['tyre' => $tyre, 'slotCode' => $slotCode])
     @else
-        <div class="empty-slot-placeholder text-center my-auto py-2">
-            <i class="bx bx-plus-circle fs-3 d-block mb-1 opacity-50"></i>
-            <small class="empty-slot-text opacity-75 fw-semibold d-block" style="font-size: 0.68rem;">Empty Slot</small>
+        <div class="empty-slot-placeholder text-center my-auto py-2 w-100">
+            <i class="bx bx-plus-circle fs-3 d-block mb-1 slot-plus-icon text-primary"></i>
+            <span class="empty-slot-text fw-bold d-block text-primary" style="font-size: 0.72rem;">+ Add Tyre</span>
+            <small class="text-muted d-block empty-slot-hint" style="font-size: 0.60rem;">Click to create</small>
         </div>
     @endif
 </div>
+

@@ -17,19 +17,44 @@
     </div>
 
     <div class="card">
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">New Tyre Record</h5>
+            @if(($returnTo ?? request('return_to')) === 'layout')
+                <a href="{{ route('admin.maintenance.tyre-management.layout', ['vehicle_id' => $selectedVehicleId ?? request('vehicle_id')]) }}" class="btn btn-sm btn-outline-primary">
+                    <i class="bx bx-arrow-back me-1"></i> Back to Graphic Layout
+                </a>
+            @endif
         </div>
         <div class="card-body">
+            @php
+                $currentPos = old('tyre_position', $selectedPosition ?? request('tyre_position', request('position', '')));
+                $currentVehicleId = old('vehicle_id', $selectedVehicleId ?? request('vehicle_id', ''));
+            @endphp
+
+            @if(($returnTo ?? request('return_to')) === 'layout' && $preselectedVehicle)
+                <div class="alert alert-primary d-flex align-items-center mb-4 shadow-xs" role="alert">
+                    <i class="bx bx-info-circle fs-4 me-2"></i>
+                    <div>
+                        <strong>Graphic Layout Integration:</strong> Adding tyre for Vehicle <span class="badge bg-dark fs-6">{{ $preselectedVehicle->vehicle_number }}</span>
+                        @if(!empty($currentPos))
+                            at Slot <span class="badge bg-primary fs-6">{{ $currentPos }}</span>
+                        @endif
+                        . Upon saving, this tyre will automatically be mounted to the layout.
+                    </div>
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('admin.maintenance.tyre-management.store') }}">
                 @csrf
+                <input type="hidden" name="return_to" value="{{ $returnTo ?? request('return_to', '') }}">
+
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label">Vehicle <span class="text-danger">*</span></label>
                         <select name="vehicle_id" class="form-select @error('vehicle_id') is-invalid @enderror" required>
                             <option value="">Select Vehicle</option>
                             @foreach($vehicles as $vehicle)
-                                <option value="{{ $vehicle->id }}" {{ old('vehicle_id') == $vehicle->id ? 'selected' : '' }}>{{ $vehicle->vehicle_number }}</option>
+                                <option value="{{ $vehicle->id }}" {{ $currentVehicleId == $vehicle->id ? 'selected' : '' }}>{{ $vehicle->vehicle_number }}</option>
                             @endforeach
                         </select>
                         @error('vehicle_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
@@ -38,41 +63,41 @@
                         <label class="form-label">Tyre Position <span class="text-danger">*</span></label>
                         <select name="tyre_position" class="form-select @error('tyre_position') is-invalid @enderror" required>
                             <option value="">Select Position</option>
-                            <optgroup label="Left Side (8 Slots)">
-                                <option value="L1" {{ old('tyre_position') == 'L1' ? 'selected' : '' }}>L1 - Front Left (Steering)</option>
-                                <option value="L2" {{ old('tyre_position') == 'L2' ? 'selected' : '' }}>L2 - Drive 1 Left Outer</option>
-                                <option value="L3" {{ old('tyre_position') == 'L3' ? 'selected' : '' }}>L3 - Drive 1 Left Inner</option>
-                                <option value="L4" {{ old('tyre_position') == 'L4' ? 'selected' : '' }}>L4 - Drive 2 Left Outer</option>
-                                <option value="L5" {{ old('tyre_position') == 'L5' ? 'selected' : '' }}>L5 - Drive 2 Left Inner</option>
-                                <option value="L6" {{ old('tyre_position') == 'L6' ? 'selected' : '' }}>L6 - Axle 4 Left Outer</option>
-                                <option value="L7" {{ old('tyre_position') == 'L7' ? 'selected' : '' }}>L7 - Axle 4 Left Inner</option>
-                                <option value="L8" {{ old('tyre_position') == 'L8' ? 'selected' : '' }}>L8 - Axle 5 Left Outer 4</option>
-                                <option value="L9" {{ old('tyre_position') == 'L9' ? 'selected' : '' }}>L9 - Axle 5 Left Inner 4</option>
+                            <optgroup label="Left Side (9 Slots)">
+                                <option value="L1" {{ $currentPos == 'L1' ? 'selected' : '' }}>L1 - Front Left (Steering)</option>
+                                <option value="L2" {{ $currentPos == 'L2' ? 'selected' : '' }}>L2 - Drive 1 Left Outer</option>
+                                <option value="L3" {{ $currentPos == 'L3' ? 'selected' : '' }}>L3 - Drive 1 Left Inner</option>
+                                <option value="L4" {{ $currentPos == 'L4' ? 'selected' : '' }}>L4 - Drive 2 Left Outer</option>
+                                <option value="L5" {{ $currentPos == 'L5' ? 'selected' : '' }}>L5 - Drive 2 Left Inner</option>
+                                <option value="L6" {{ $currentPos == 'L6' ? 'selected' : '' }}>L6 - Axle 4 Left Outer</option>
+                                <option value="L7" {{ $currentPos == 'L7' ? 'selected' : '' }}>L7 - Axle 4 Left Inner</option>
+                                <option value="L8" {{ $currentPos == 'L8' ? 'selected' : '' }}>L8 - Axle 5 Left Outer 4</option>
+                                <option value="L9" {{ $currentPos == 'L9' ? 'selected' : '' }}>L9 - Axle 5 Left Inner 4</option>
                             </optgroup>
                             <optgroup label="Right Side (9 Slots)">
-                                <option value="R1" {{ old('tyre_position') == 'R1' ? 'selected' : '' }}>R1 - Front Right (Steering)</option>
-                                <option value="R2" {{ old('tyre_position') == 'R2' ? 'selected' : '' }}>R2 - Drive 1 Right Outer</option>
-                                <option value="R3" {{ old('tyre_position') == 'R3' ? 'selected' : '' }}>R3 - Drive 1 Right Inner</option>
-                                <option value="R4" {{ old('tyre_position') == 'R4' ? 'selected' : '' }}>R4 - Drive 2 Right Outer</option>
-                                <option value="R5" {{ old('tyre_position') == 'R5' ? 'selected' : '' }}>R5 - Drive 2 Right Inner</option>
-                                <option value="R6" {{ old('tyre_position') == 'R6' ? 'selected' : '' }}>R6 - Axle 4 Right Outer</option>
-                                <option value="R7" {{ old('tyre_position') == 'R7' ? 'selected' : '' }}>R7 - Axle 4 Right Inner</option>
-                                <option value="R8" {{ old('tyre_position') == 'R8' ? 'selected' : '' }}>R8 - Axle 5 Right Outer 4</option>
-                                <option value="R9" {{ old('tyre_position') == 'R9' ? 'selected' : '' }}>R9 - Axle 5 Right Inner 4</option>
+                                <option value="R1" {{ $currentPos == 'R1' ? 'selected' : '' }}>R1 - Front Right (Steering)</option>
+                                <option value="R2" {{ $currentPos == 'R2' ? 'selected' : '' }}>R2 - Drive 1 Right Outer</option>
+                                <option value="R3" {{ $currentPos == 'R3' ? 'selected' : '' }}>R3 - Drive 1 Right Inner</option>
+                                <option value="R4" {{ $currentPos == 'R4' ? 'selected' : '' }}>R4 - Drive 2 Right Outer</option>
+                                <option value="R5" {{ $currentPos == 'R5' ? 'selected' : '' }}>R5 - Drive 2 Right Inner</option>
+                                <option value="R6" {{ $currentPos == 'R6' ? 'selected' : '' }}>R6 - Axle 4 Right Outer</option>
+                                <option value="R7" {{ $currentPos == 'R7' ? 'selected' : '' }}>R7 - Axle 4 Right Inner</option>
+                                <option value="R8" {{ $currentPos == 'R8' ? 'selected' : '' }}>R8 - Axle 5 Right Outer 4</option>
+                                <option value="R9" {{ $currentPos == 'R9' ? 'selected' : '' }}>R9 - Axle 5 Right Inner 4</option>
                             </optgroup>
                             <optgroup label="Spare Carriers (2 Slots)">
-                                <option value="SP1" {{ old('tyre_position') == 'SP1' ? 'selected' : '' }}>SP1 - Spare 1 (Stepney)</option>
-                                <option value="SP2" {{ old('tyre_position') == 'SP2' ? 'selected' : '' }}>SP2 - Spare 2 (Stepney)</option>
+                                <option value="SP1" {{ $currentPos == 'SP1' ? 'selected' : '' }}>SP1 - Spare 1 (Stepney)</option>
+                                <option value="SP2" {{ $currentPos == 'SP2' ? 'selected' : '' }}>SP2 - Spare 2 (Stepney)</option>
                             </optgroup>
                             <optgroup label="General / Legacy">
-                                <option value="Unassigned" {{ old('tyre_position') == 'Unassigned' ? 'selected' : '' }}>Unassigned Pool</option>
-                                <option value="Front Left" {{ old('tyre_position') == 'Front Left' ? 'selected' : '' }}>Front Left</option>
-                                <option value="Front Right" {{ old('tyre_position') == 'Front Right' ? 'selected' : '' }}>Front Right</option>
-                                <option value="Rear Left Outer" {{ old('tyre_position') == 'Rear Left Outer' ? 'selected' : '' }}>Rear Left Outer</option>
-                                <option value="Rear Left Inner" {{ old('tyre_position') == 'Rear Left Inner' ? 'selected' : '' }}>Rear Left Inner</option>
-                                <option value="Rear Right Outer" {{ old('tyre_position') == 'Rear Right Outer' ? 'selected' : '' }}>Rear Right Outer</option>
-                                <option value="Rear Right Inner" {{ old('tyre_position') == 'Rear Right Inner' ? 'selected' : '' }}>Rear Right Inner</option>
-                                <option value="Other" {{ old('tyre_position') == 'Other' ? 'selected' : '' }}>Other</option>
+                                <option value="Unassigned" {{ $currentPos == 'Unassigned' ? 'selected' : '' }}>Unassigned Pool</option>
+                                <option value="Front Left" {{ $currentPos == 'Front Left' ? 'selected' : '' }}>Front Left</option>
+                                <option value="Front Right" {{ $currentPos == 'Front Right' ? 'selected' : '' }}>Front Right</option>
+                                <option value="Rear Left Outer" {{ $currentPos == 'Rear Left Outer' ? 'selected' : '' }}>Rear Left Outer</option>
+                                <option value="Rear Left Inner" {{ $currentPos == 'Rear Left Inner' ? 'selected' : '' }}>Rear Left Inner</option>
+                                <option value="Rear Right Outer" {{ $currentPos == 'Rear Right Outer' ? 'selected' : '' }}>Rear Right Outer</option>
+                                <option value="Rear Right Inner" {{ $currentPos == 'Rear Right Inner' ? 'selected' : '' }}>Rear Right Inner</option>
+                                <option value="Other" {{ $currentPos == 'Other' ? 'selected' : '' }}>Other</option>
                             </optgroup>
                         </select>
                         @error('tyre_position') <div class="invalid-feedback">{{ $message }}</div> @enderror
@@ -131,7 +156,7 @@
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label">Installation Date</label>
-                        <input type="date" max="9999-12-31" name="installation_date" class="form-control @error('installation_date') is-invalid @enderror" value="{{ old('installation_date') }}">
+                        <input type="date" max="9999-12-31" name="installation_date" class="form-control @error('installation_date') is-invalid @enderror" value="{{ old('installation_date', now()->format('Y-m-d')) }}">
                         @error('installation_date') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
                     <div class="col-md-3 mb-3">
@@ -202,8 +227,12 @@
                     @error('notes') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
 
-                <button type="submit" class="btn btn-primary">Create Tyre Record</button>
-                <a href="{{ route('admin.maintenance.tyre-management.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary"><i class="bx bx-save me-1"></i> Save & Assign Tyre</button>
+                @if(($returnTo ?? request('return_to')) === 'layout')
+                    <a href="{{ route('admin.maintenance.tyre-management.layout', ['vehicle_id' => $currentVehicleId]) }}" class="btn btn-outline-secondary">Cancel</a>
+                @else
+                    <a href="{{ route('admin.maintenance.tyre-management.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                @endif
             </form>
         </div>
     </div>

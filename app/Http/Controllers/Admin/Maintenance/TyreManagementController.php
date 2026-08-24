@@ -28,7 +28,7 @@ class TyreManagementController extends Controller
         return view('admin.maintenance.tyre-management.index', compact('tyres', 'vehicles'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         if (!auth()->user()->can('create tyre management') && !auth()->user()->isSuperAdmin()) {
             abort(403, 'Unauthorized action.');
@@ -39,7 +39,13 @@ class TyreManagementController extends Controller
         $models = TyreModel::where('status', 'active')->orderBy('name')->get();
         $sizes = TyreSize::where('status', 'active')->orderBy('name')->get();
 
-        return view('admin.maintenance.tyre-management.create', compact('vehicles', 'brands', 'models', 'sizes'));
+        $selectedVehicleId = $request->get('vehicle_id');
+        $selectedPosition = $request->get('tyre_position') ?? $request->get('position');
+        $returnTo = $request->get('return_to');
+
+        $preselectedVehicle = $selectedVehicleId ? Vehicle::find($selectedVehicleId) : null;
+
+        return view('admin.maintenance.tyre-management.create', compact('vehicles', 'brands', 'models', 'sizes', 'selectedVehicleId', 'selectedPosition', 'returnTo', 'preselectedVehicle'));
     }
 
     public function store(Request $request)
@@ -73,9 +79,28 @@ class TyreManagementController extends Controller
         $validated['company_id'] = $user->company_id;
         $validated['branch_id'] = $user->branch_id;
 
+        // If newly created tyre is active and assigned to a specific vehicle position,
+        // mark any existing active tyre in that slot as removed to avoid duplication
+        if ($validated['status'] === 'active' && !empty($validated['tyre_position']) && $validated['tyre_position'] !== 'Unassigned') {
+            $occupyingTyre = TyreManagement::where('vehicle_id', $validated['vehicle_id'])
+                ->where('tyre_position', $validated['tyre_position'])
+                ->where('status', 'active')
+                ->first();
+
+            if ($occupyingTyre) {
+                $occupyingTyre->status = 'removed';
+                $occupyingTyre->save();
+            }
+        }
+
         $tyre = TyreManagement::create($validated);
 
         ActivityLog::log('tyre_created', "Tyre record created for vehicle", $tyre);
+
+        if ($request->get('return_to') === 'layout') {
+            return redirect()->route('admin.maintenance.tyre-management.layout', ['vehicle_id' => $tyre->vehicle_id])
+                ->with('success', "Tyre {$tyre->tyre_brand} (" . ($tyre->serial_number ?: 'ID#'.$tyre->id) . ") added and assigned to position {$tyre->tyre_position} successfully!");
+        }
 
         return redirect()->route('admin.maintenance.tyre-management.index')
             ->with('success', 'Tyre record created successfully');

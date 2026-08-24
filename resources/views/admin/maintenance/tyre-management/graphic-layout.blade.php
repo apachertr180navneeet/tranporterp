@@ -18,11 +18,24 @@
             <a href="{{ route('admin.maintenance.tyre-management.index') }}" class="btn btn-outline-secondary">
                 <i class="bx bx-list-ul me-1"></i> List View
             </a>
-            <a href="{{ route('admin.maintenance.tyre-management.create') }}" class="btn btn-primary">
+            <a href="{{ route('admin.maintenance.tyre-management.create', ['vehicle_id' => $selectedVehicleId, 'return_to' => 'layout']) }}" class="btn btn-primary">
                 <i class="bx bx-plus me-1"></i> New Tyre
             </a>
         </div>
     </div>
+
+    @if(session('success'))
+        <div class="alert alert-success alert-dismissible shadow-sm mb-3" role="alert">
+            <i class="bx bx-check-circle me-1"></i> {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-danger alert-dismissible shadow-sm mb-3" role="alert">
+            <i class="bx bx-error-circle me-1"></i> {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
 
     <!-- Toast Notification Container -->
     <div id="toast-container" class="position-fixed top-0 end-0 p-3" style="z-index: 9999;"></div>
@@ -769,12 +782,47 @@
     border-color: #0d6efd !important;
     transform: scale(1.02);
 }
+
+/* Interactive Empty Slot Styling */
+.tyre-slot.empty {
+    cursor: pointer !important;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+}
+.tyre-slot.empty:hover {
+    border-color: #38bdf8 !important;
+    background-color: rgba(56, 189, 248, 0.15) !important;
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 20px rgba(56, 189, 248, 0.4) !important;
+}
+.tyre-slot.empty:hover .slot-plus-icon {
+    transform: scale(1.25);
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    color: #38bdf8 !important;
+}
+.tyre-slot.empty:hover .empty-slot-text {
+    color: #38bdf8 !important;
+    font-weight: 800 !important;
+}
+.tyre-slot.empty:hover .empty-slot-hint {
+    color: #bae6fd !important;
+}
 </style>
 
 <script>
 let currentVehicleId = {{ $selectedVehicleId ?? 'null' }};
 let draggedTyreId = null;
 let draggedFromSlot = null;
+
+function handleEmptySlotClick(slotCode) {
+    if (!currentVehicleId) {
+        showToast('warning', 'Please select a vehicle first.');
+        return;
+    }
+    const createUrl = "{{ route('admin.maintenance.tyre-management.create') }}?vehicle_id=" + currentVehicleId + "&tyre_position=" + encodeURIComponent(slotCode) + "&return_to=layout";
+    window.location.href = createUrl;
+}
+window.handleEmptySlotClick = handleEmptySlotClick;
 
 function setLayoutView(mode) {
     const topDownContainer = document.getElementById('top-down-view-container');
